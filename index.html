@@ -17,20 +17,26 @@
 <style>
 /* Layout: one column ledger — summary strip, tabs, then due-date rows like a collector's daybook */
 :root{
-  --bg:#F6F4EF; --surface:#FFFFFF; --sunk:#EFECE6; --ink:#24303A; --muted:#66707A; --line:#E3DED5;
-  --accent:#2F6E7A; --accent-ink:#FFFFFF; --accent-soft:#E3EFF1;
+  --bg:#F3F1EC; --surface:#FFFFFF; --sunk:#EEEBE4; --ink:#1D2A33; --muted:#69737D; --line:#E4DFD6;
+  --accent:#1F5F6B; --accent-ink:#FFFFFF; --accent-soft:#E0EDEF; --gold:#B5832F; --gold-soft:#F6ECDA;
+  --side:#163A44; --side-ink:#D6E4E7; --side-mute:#8FB0B7; --side-act:#21515D;
+  --shadow:0 1px 2px rgba(20,30,35,.05),0 6px 20px rgba(20,30,35,.05);
   --bad:#B9473F; --bad-soft:#FAEBE8; --warn:#9C6511; --warn-soft:#FBF1DD; --good:#2E7656; --good-soft:#E4F2EA;
   --f-display:"Readex Pro","IBM Plex Sans Arabic",Tahoma,sans-serif;
   --f-body:"IBM Plex Sans Arabic",Tahoma,"Segoe UI",sans-serif;
-  --r:12px;
+  --r:14px;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#191C20; --surface:#22262B; --sunk:#2A2F35; --ink:#E3E6E9; --muted:#A3AAB2; --line:#353B42;
-  --accent:#7FB6C1; --accent-ink:#0F1E22; --accent-soft:#1F353B;
+  --bg:#15191D; --surface:#1E2328; --sunk:#262C32; --ink:#E4E8EB; --muted:#9EA8B1; --line:#323940;
+  --accent:#7DB9C4; --accent-ink:#0E1E22; --accent-soft:#1D343A; --gold:#D9AE63; --gold-soft:#3A2F1C;
+  --side:#10171B; --side-ink:#CFDDE1; --side-mute:#7E969C; --side-act:#1E3238;
+  --shadow:0 1px 2px rgba(0,0,0,.3);
   --bad:#E8968C; --bad-soft:#3A2624; --warn:#E2B76A; --warn-soft:#382D1C; --good:#83C7A2; --good-soft:#1E342A; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#191C20; --surface:#22262B; --sunk:#2A2F35; --ink:#E3E6E9; --muted:#A3AAB2; --line:#353B42;
-  --accent:#7FB6C1; --accent-ink:#0F1E22; --accent-soft:#1F353B;
+  --bg:#15191D; --surface:#1E2328; --sunk:#262C32; --ink:#E4E8EB; --muted:#9EA8B1; --line:#323940;
+  --accent:#7DB9C4; --accent-ink:#0E1E22; --accent-soft:#1D343A; --gold:#D9AE63; --gold-soft:#3A2F1C;
+  --side:#10171B; --side-ink:#CFDDE1; --side-mute:#7E969C; --side-act:#1E3238;
+  --shadow:0 1px 2px rgba(0,0,0,.3);
   --bad:#E8968C; --bad-soft:#3A2624; --warn:#E2B76A; --warn-soft:#382D1C; --good:#83C7A2; --good-soft:#1E342A; color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55;direction:rtl}
@@ -272,6 +278,110 @@ label.btn{font:600 .88rem var(--f-body);border-radius:10px;padding:8px 12px;curs
 @media (max-width:560px){.req{grid-template-columns:1fr}.req .side{align-items:stretch}.req .side .pill{align-self:flex-start}}
 .wtxt{width:100%;min-height:260px;font:inherit;font-size:.9rem;line-height:1.7}
 </style>
+<style>
+body{font-size:15px}
+.strip{display:none!important}
+.stat,.row,.tbl-wrap,.bmap,.camp,.req,.k1,.cmini div,.bars,.empty{box-shadow:var(--shadow)}
+.row,.bmap,.camp,.req,.kgrid .k1{border-color:transparent}
+.empty{border-style:dashed;box-shadow:none}
+h1{font-size:1.35rem}
+header{align-items:center}
+.group-h{font-size:1.02rem;color:var(--ink);margin:22px 0 10px}
+.tabs .brand{display:none}
+.tab .ti{display:none}
+/* home */
+.hello{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin:4px 0 14px}
+.hello h2{font-family:var(--f-display);font-size:1.45rem;margin:0}
+.hello .d{color:var(--muted);font-size:.9rem}
+.qa{display:flex;gap:8px;flex-wrap:wrap}
+.kp{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.kc{background:var(--surface);border-radius:var(--r);padding:16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:4px;min-width:0;cursor:default}
+.kc[data-go]{cursor:pointer}.kc[data-go]:hover{outline:2px solid var(--accent-soft)}
+.kc .l{color:var(--muted);font-size:.82rem;display:flex;justify-content:space-between;gap:6px}
+.kc .v{font-family:var(--f-display);font-weight:700;font-size:1.65rem;font-variant-numeric:tabular-nums;line-height:1.2}
+.kc .s{color:var(--muted);font-size:.8rem}
+.kc.bad .v{color:var(--bad)}.kc.good .v{color:var(--good)}.kc.acc .v{color:var(--accent)}
+.pbar{height:8px;border-radius:99px;background:var(--sunk);overflow:hidden;margin-top:6px}.pbar i{display:block;height:100%;background:var(--accent);border-radius:99px}
+.hgrid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:14px;margin-top:14px}
+.panel{background:var(--surface);border-radius:var(--r);box-shadow:var(--shadow);padding:14px 16px;min-width:0}
+.panel h3{font-family:var(--f-display);font-size:1rem;margin:0 0 8px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.panel h3 small{color:var(--muted);font:500 .8rem var(--f-body)}
+.li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.li:last-child{border-bottom:0}
+.li .t{min-width:0}.li .t b{font-weight:600;cursor:pointer}.li .t b:hover{color:var(--accent)}
+.li .t span{display:block;color:var(--muted);font-size:.8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.li .r{display:flex;align-items:center;gap:6px}
+.li .amt{font-size:.95rem}
+.mini{font:600 .78rem var(--f-body);border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:8px;padding:5px 9px;cursor:pointer;text-decoration:none;white-space:nowrap}
+.mini.p{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.bgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px;margin-top:14px}
+.bc{background:var(--surface);border-radius:var(--r);box-shadow:var(--shadow);padding:14px;cursor:pointer;display:flex;flex-direction:column;gap:6px}
+.bc:hover{outline:2px solid var(--accent-soft)}
+.bc b{font-family:var(--f-display);font-size:1rem}.bc .s{color:var(--muted);font-size:.8rem}
+.bc .row3{display:flex;justify-content:space-between;align-items:baseline;gap:6px}
+.dots{display:flex;flex-wrap:wrap;gap:3px;margin-top:2px}.dots i{width:10px;height:10px;border-radius:3px;background:var(--good)}
+.dots i.warn{background:var(--warn)}.dots i.bad{background:var(--bad)}.dots i.prom{background:var(--accent)}.dots i.vac{background:var(--line)}.dots i.fam{background:#8a6fb5}.dots i.mnt{background:#b0703a}
+.muted{color:var(--muted)}
+/* calendar */
+.calh{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:6px 0 10px}
+.calh b{font-family:var(--f-display);font-size:1.1rem}
+.cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.cal .dn{font-size:.75rem;color:var(--muted);text-align:center;padding:4px 0}
+.cal .c{background:var(--surface);border-radius:10px;min-height:92px;padding:6px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:3px;min-width:0}
+.cal .c.o{background:transparent;box-shadow:none}
+.cal .c.td{outline:2px solid var(--accent)}
+.cal .c .n{font-size:.78rem;color:var(--muted);display:flex;justify-content:space-between}
+.cal .c .n b{color:var(--ink);font-variant-numeric:tabular-nums}
+.cal .ev{font-size:.7rem;border-radius:6px;padding:2px 5px;background:var(--accent-soft);color:var(--accent);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+.cal .ev.bad{background:var(--bad-soft);color:var(--bad)}.cal .ev.paid{background:var(--good-soft);color:var(--good)}
+/* unit profile */
+#profDlg{width:min(760px,calc(100vw - 32px))}
+.pf-h{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.pf-h h2{margin:0}
+.pf-g{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.pf-g div{background:var(--sunk);border-radius:10px;padding:8px 10px;font-size:.8rem;color:var(--muted);min-width:0}
+.pf-g b{display:block;color:var(--ink);font-size:.95rem;font-weight:600;overflow-wrap:anywhere}
+.pf-s h4{margin:10px 0 6px;font-family:var(--f-display);font-size:.95rem}
+.pf-act{display:flex;gap:6px;flex-wrap:wrap}
+.unit[data-prof],.tile{cursor:pointer}
+.unit[data-prof]:hover{color:var(--accent)}
+@media (max-width:900px){.kp{grid-template-columns:repeat(2,minmax(0,1fr))}.hgrid{grid-template-columns:1fr}}
+@media (max-width:640px){.kc{padding:12px}.kc .v{font-size:1.3rem}.pf-g{grid-template-columns:1fr 1fr}.cal{gap:3px}.cal .c{min-height:64px;padding:4px}.cal .ev{font-size:.6rem;padding:1px 3px}.hello h2{font-size:1.2rem}.bgrid{grid-template-columns:1fr 1fr}}
+@media (max-width:640px){.tab{font-size:.6rem;padding:7px 0 6px}.tab .ti{width:20px;height:20px}.tabs{grid-template-columns:repeat(7,minmax(0,1fr))}}
+/* desktop sidebar */
+@media (min-width:1024px){
+  body{padding-right:244px}
+  .tabs{position:fixed;top:0;bottom:0;right:0;width:244px;margin:0;border:0;background:var(--side);display:flex;flex-direction:column;gap:2px;padding:18px 12px;overflow-y:auto;z-index:20}
+  .tabs .brand{display:flex;align-items:center;gap:10px;color:#fff;font:700 1.1rem var(--f-display);padding:4px 10px 18px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:10px}
+  .tabs .brand i{width:34px;height:34px;border-radius:10px;background:var(--gold);display:grid;place-items:center;font-style:normal;color:#1b1b1b;font-size:1rem}
+  .tabs .brand small{display:block;font:500 .72rem var(--f-body);color:var(--side-mute)}
+  .tab{display:flex;align-items:center;gap:12px;border:0;border-radius:10px;padding:11px 12px;color:var(--side-ink);font:600 .95rem var(--f-body);text-align:right}
+  .tab .ti{display:block;width:20px;height:20px;opacity:.85}
+  .tab:hover{background:rgba(255,255,255,.05)}
+  .tab[aria-selected="true"]{background:var(--side-act);color:#fff;border:0;box-shadow:inset -3px 0 0 var(--gold)}
+  .tab .tx{display:inline}
+  .wrap{max-width:1240px;padding-inline:28px}
+}
+@media (min-width:1024px) and (prefers-color-scheme:dark){.tabs{border-left:1px solid var(--line)}}
+@media print{.tabs{display:none!important}body{padding:0}}
+header .sub{display:none}
+header h1{font-size:1.15rem;color:var(--muted);font-weight:600}
+@media (min-width:641px){
+  .hdr-act{position:relative}
+  .more-t{display:inline-flex;align-items:center}
+  .more{display:none;position:absolute;top:calc(100% + 6px);left:0;z-index:40;background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 32px rgba(0,0,0,.14);padding:8px;min-width:250px;flex-direction:column;gap:4px}
+  .more.open{display:flex}
+  .more .btn,.more label.btn{width:100%;justify-content:flex-start;text-align:right;border-color:transparent}
+  .more .btn:hover{background:var(--sunk)}
+}
+@media (min-width:1024px){header h1{display:none}}
+.cal .c{cursor:pointer}
+.cal .c.sel{outline:2px solid var(--gold)}
+.cal .more-ev{font-size:.68rem;color:var(--muted)}
+.cal .cnt{display:none}
+@media (max-width:640px){.cal .ev{display:none}.cal .more-ev{display:none}.cal .cnt{display:inline-block;margin-top:auto;align-self:flex-start;font:700 .7rem var(--f-body);background:var(--accent-soft);color:var(--accent);border-radius:99px;padding:1px 6px}.cal .cnt.bad{background:var(--bad-soft);color:var(--bad)}.cal .c .n span.num{display:none}}
+.dayl{margin-top:12px}
+</style>
 </head><body>
 
 <div class="wrap">
@@ -310,6 +420,8 @@ label.btn{font:600 .88rem var(--f-body);border-radius:10px;padding:8px 12px;curs
   </section>
 
   <div class="tabs" role="tablist">
+    <div class="brand"><i>د</i><span>دفتر جمجوم<small>إدارة الإيجارات</small></span></div>
+    <button class="tab" role="tab" data-tab="home" aria-selected="false" id="tab-home"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 11 12 4l8.5 7"/><path d="M5.5 9.5V20h13V9.5"/><path d="M10 20v-5h4v5"/></svg><span>الرئيسية</span></button>
     <button class="tab" role="tab" data-tab="due" aria-selected="true" id="tab-due"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9a6 6 0 1 1 12 0c0 6 2.5 8 2.5 8h-17S6 15 6 9"/><path d="M10 20.5h4"/></svg><span>المتابعة</span></button>
     <button class="tab" role="tab" data-tab="units" aria-selected="false" id="tab-units"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="3" width="15" height="18" rx="1.5"/><path d="M9 7.5h1.5M13.5 7.5H15M9 11.5h1.5M13.5 11.5H15M10 21v-4h4v4"/></svg><span>الوحدات</span></button>
     <button class="tab" role="tab" data-tab="contracts" aria-selected="false" id="tab-contracts"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6.5A1.5 1.5 0 0 0 5 4.5v15A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V8z"/><path d="M14 3v5h5M8.5 13h7M8.5 16.5h5"/></svg><span>العقود<span class="tx"> والتجديد</span></span></button>
@@ -387,6 +499,7 @@ label.btn{font:600 .88rem var(--f-body);border-radius:10px;padding:8px 12px;curs
   <p class="hint" style="margin:0">التذكير اليومي ما يحسبه متأخر لين يعدّي هالتاريخ. لما يسدد اضغط «دفع» وينمسح الوعد تلقائياً.</p>
   <div class="foot"><button class="btn danger" type="button" id="promClear">مسح الوعد</button><span style="flex:1"></span><button class="btn" type="button" data-close>إلغاء</button><button class="btn primary" type="submit" id="promSave">حفظ الوعد</button></div>
 </form></dialog>
+<dialog id="profDlg"><div class="dlg" id="profBox"></div></dialog>
 <dialog id="adDlg"><div class="dlg">
   <h2>إعلان وحدة شاغرة</h2>
   <p class="hint" style="margin:0">عدّل النص (الغرف، المساحة، الدور) وبعدين انسخه لعقار أو حراج، أو أرسله واتساب.</p>
@@ -524,7 +637,7 @@ function waLink(u){
 function rowHTML(u,mode){
   const s=stat(u), amt=inst(u), od=(days(u.due)??0)<0, pm=promised(u), br=broke(u);
   return `<div class="row ${pm?'prom':s.c}"><div class="mark"></div>
-    <div class="who"><div class="unit">${esc(label(u))}</div><div class="name">${esc(u.tenant)}</div>
+    <div class="who"><div class="unit" data-prof="${u.id}">${esc(label(u))}</div><div class="name">${esc(u.tenant)}</div>
       <div class="meta"><span class="num">${u.phone?esc(u.phone):'الجوال ناقص'}</span><span>الدفعة القادمة: <b class="num">${dmy(u.due)}</b></span>${u.n?`<span>${u.n===12?'شهري':u.n===1?'سنوي':u.n+' دفعات'}</span>`:'<span>عدد الدفعات ناقص</span>'}</div>
       ${u.promise&&od?`<div class="note"><b>${br?'أخلف الوعد':'وعد بالسداد'}: ${dmy(u.promise)}</b>${u.promiseNote?' — '+esc(u.promiseNote):''}</div>`:''}
       ${u.note?`<div class="note">${esc(u.note)}</div>`:''}</div>
@@ -545,7 +658,8 @@ function renderDue(){
   const late=U.filter(u=>{const k=days(u.due);return k!=null&&k<0&&!promised(u)}), proms=U.filter(promised), soon=U.filter(u=>{const k=days(u.due);return k!=null&&k>=0&&k<=30}),
         later=U.filter(u=>{const k=days(u.due);return k!=null&&k>30}), none=U.filter(u=>days(u.due)==null);
   const sec=(t,arr)=>arr.length?`<div class="group-h"><span>${t}</span><span class="num">${arr.length} · ${fmt(arr.reduce((a,u)=>a+(inst(u)||0),0))} ريال</span></div><div class="list">${arr.map(rowHTML).join('')}</div>`:'';
-  return sec('متأخر',late)+sec('وعود بالسداد',proms.sort((a,b)=>promK(a)-promK(b)))+sec('يحل خلال 30 يوم',soon)+sec('بعدين',later)+sec('بدون موعد',none)+(famL.length?`<div class="group-h"><span>سكن عائلي — بدون إيجار</span><span class="num">${famL.length}</span></div><div class="list">${famL.map(u=>`<div class="row"><div class="mark"></div><div class="who"><div class="unit">${esc(label(u))}</div><div class="name">${esc(u.tenant)} · ما ينحسب من الإيجارات</div></div><div class="side"><div class="actions">${state.canWrite?`<button class="btn" type="button" data-edit="${u.id}">تعديل</button>`:''}</div></div></div>`).join('')}</div>`:'')+(vac.length?`<div class="group-h"><span>شاغرة</span><span class="num">${vac.length}</span></div><div class="list">${vac.map(u=>`<div class="row"><div class="mark"></div><div class="who"><div class="unit">${esc(label(u))}</div><div class="name">شاغرة${u.rent?' · آخر إيجار '+fmt(u.rent)+' ريال':''}</div></div><div class="side"><div class="actions"><button class="btn primary" type="button" data-ad="${u.id}">إعلان</button>${state.canWrite?`<button class="btn" type="button" data-edit="${u.id}">تأجير / تعديل</button>`:''}</div></div></div>`).join('')}</div>`:'');
+  const dtb=`<div class="tools"><div class="seg"><button type="button" data-dview="list" aria-pressed="true">قائمة</button><button type="button" data-dview="cal" aria-pressed="false">تقويم الشهر</button></div></div>`;
+  return dtb+sec('متأخر',late)+sec('وعود بالسداد',proms.sort((a,b)=>promK(a)-promK(b)))+sec('يحل خلال 30 يوم',soon)+sec('بعدين',later)+sec('بدون موعد',none)+(famL.length?`<div class="group-h"><span>سكن عائلي — بدون إيجار</span><span class="num">${famL.length}</span></div><div class="list">${famL.map(u=>`<div class="row"><div class="mark"></div><div class="who"><div class="unit">${esc(label(u))}</div><div class="name">${esc(u.tenant)} · ما ينحسب من الإيجارات</div></div><div class="side"><div class="actions">${state.canWrite?`<button class="btn" type="button" data-edit="${u.id}">تعديل</button>`:''}</div></div></div>`).join('')}</div>`:'')+(vac.length?`<div class="group-h"><span>شاغرة</span><span class="num">${vac.length}</span></div><div class="list">${vac.map(u=>`<div class="row"><div class="mark"></div><div class="who"><div class="unit">${esc(label(u))}</div><div class="name">شاغرة${u.rent?' · آخر إيجار '+fmt(u.rent)+' ريال':''}</div></div><div class="side"><div class="actions"><button class="btn primary" type="button" data-ad="${u.id}">إعلان</button>${state.canWrite?`<button class="btn" type="button" data-edit="${u.id}">تأجير / تعديل</button>`:''}</div></div></div>`).join('')}</div>`:'');
 }
 
 function renderUnits(){
@@ -557,7 +671,7 @@ function renderUnits(){
   return tb+groups.map(([p,arr])=>`
     <div class="group-h"><span>${title[p]||PROP_T[p]||p}</span><span class="num">${arr.length} · ${fmt(arr.reduce((a,u)=>a+(+u.rent||0),0))} ريال/سنة</span></div>
     <div class="tbl-wrap"><table><thead><tr><th>الوحدة</th><th>المستأجر</th><th>الجوال</th><th>الإيجار السنوي</th><th>الدفعات</th><th>الدفعة القادمة</th><th>نهاية العقد</th><th>رقم العقد</th>${p==='المروة'?'<th>بعد التجديد</th>':''}<th>الحالة</th><th></th></tr></thead><tbody>
-    ${arr.map(u=>{const end=days(u.contractEnd);return `<tr><td>${esc(p==='متفرقة'?u.loc+' – '+u.unit:u.unit)}</td><td>${esc(u.tenant)}</td><td class="n">${esc(u.phone)||'—'}</td><td class="n">${fmt(u.rent)}</td><td class="n">${u.n||'—'}</td><td class="n">${dmy(u.due)}</td>
+    ${arr.map(u=>{const end=days(u.contractEnd);return `<tr><td class="unit" data-prof="${u.id}">${esc(p==='متفرقة'?u.loc+' – '+u.unit:u.unit)}</td><td>${esc(u.tenant)}</td><td class="n">${esc(u.phone)||'—'}</td><td class="n">${fmt(u.rent)}</td><td class="n">${u.n||'—'}</td><td class="n">${dmy(u.due)}</td>
       <td class="n" style="color:${end!=null&&end<0?'var(--bad)':end!=null&&end<=60?'var(--warn)':'inherit'}">${dmy(u.contractEnd)}</td><td class="n">${u.contractUrl?`<a href="${esc(u.contractUrl)}" target="_blank" rel="noopener" style="color:var(--accent)">${esc(u.contractNo)||'العقد'}</a>`:(esc(u.contractNo)||'—')}</td>${p==='المروة'?`<td class="n">${fmt(u.newRent)}</td>`:''}<td>${vacant(u)?'<span class="pill vac">شاغرة</span>':u.status==='صيانة'?'<span class="pill warn">صيانة</span>':fam(u)?'<span class="pill none">سكن عائلي</span>':'<span class="pill good">مؤجرة</span>'}</td><td style="white-space:nowrap"><button class="btn" type="button" data-stmt="${u.id}">كشف</button> ${state.canWrite?`<button class="btn" type="button" data-edit="${u.id}">تعديل</button>`:''}</td></tr>`}).join('')}
     </tbody></table></div>`).join('');
 }
@@ -579,7 +693,7 @@ function renderMap(U){
     const rent=arr.filter(u=>!vacant(u)&&!fam(u)).reduce((a,u)=>a+(+u.rent||0),0);
     return `<section class="bmap"><div class="bmap-h"><div><h3>${esc(name)}</h3><div class="s">${arr.length} وحدة · ${arr.length-vac-fm} مؤجرة${vac?' · '+vac+' شاغرة':''}${fm?' · '+fm+' عائلي':''}${lt?' · <b style="color:var(--bad)">'+lt+' متأخر</b>':''}</div></div>
       <div style="text-align:left"><div class="num" style="font-weight:700">${fmt(rent)} <span class="s">ريال/سنة</span></div><div class="s">إشغال ${occ}%</div><div class="occ"><i style="width:${occ}%"></i></div></div></div>
-      <div class="tiles">${arr.map(u=>{const[c,t]=tileCls(u);return `<button type="button" class="tile t-${c}" ${state.canWrite?`data-edit="${u.id}"`:`data-stmt="${u.id}"`} title="${esc(label(u))}"><b>${esc(u.unit)}</b><span class="tn">${esc(String(u.tenant||'—').split(' ').slice(0,2).join(' '))}</span><span class="ts">${t}</span></button>`}).join('')}</div></section>`}).join('');
+      <div class="tiles">${arr.map(u=>{const[c,t]=tileCls(u);return `<button type="button" class="tile t-${c}" data-prof="${u.id}" title="${esc(label(u))}"><b>${esc(u.unit)}</b><span class="tn">${esc(String(u.tenant||'—').split(' ').slice(0,2).join(' '))}</span><span class="ts">${t}</span></button>`}).join('')}</div></section>`}).join('');
 }
 
 function renderPays(){
@@ -609,9 +723,10 @@ function render(){
   summary();
   document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected',String(t.dataset.tab===state.tab)));
   document.querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',String(c.dataset.prop===state.prop)));
-  $('#view').innerHTML=state.tab==='due'?renderDue():state.tab==='units'?renderUnits():state.tab==='contracts'?renderContracts():state.tab==='expenses'?renderExpenses():state.tab==='reports'?renderReports():renderPays();
+  $('#view').innerHTML=state.tab==='home'?renderHome():state.tab==='due'?(state.dview==='cal'?renderCal():renderDue()):state.tab==='units'?renderUnits():state.tab==='contracts'?renderContracts():state.tab==='expenses'?renderExpenses():state.tab==='reports'?renderReports():renderPays();
+  document.querySelector('.filters').hidden=state.tab==='home';
   $('#whoBtn').textContent='المستخدم: '+(who()||'—');
-  $('#addPayTop').hidden=!state.canWrite;
+  $('#addPayTop').hidden=!state.canWrite||state.tab==='home';
 }
 
 /* ---------- payment dialog ---------- */
@@ -680,7 +795,7 @@ $('#uDeleteSure').addEventListener('click',async()=>{if(!editing||!state.db)retu
 document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>b.closest('dialog').close()));
 
 /* ---------- events ---------- */
-document.querySelector('.tabs').addEventListener('click',e=>{const t=e.target.closest('.tab');if(!t)return;state.tab=t.dataset.tab;try{localStorage.setItem('tab',state.tab)}catch(_){}render();if(matchMedia('(max-width:640px)').matches){const f=document.querySelector('.filters');const y=f.getBoundingClientRect().top+scrollY-8;if(scrollY>y)scrollTo({top:y})}});
+document.querySelector('.tabs').addEventListener('click',e=>{const t=e.target.closest('.tab');if(!t)return;state.tab=t.dataset.tab;try{localStorage.setItem('tab2',state.tab)}catch(_){}render();if(matchMedia('(max-width:640px)').matches){const f=document.querySelector('.filters');const y=f.getBoundingClientRect().top+scrollY-8;if(scrollY>y)scrollTo({top:y})}});
 function labelTables(){document.querySelectorAll('.tbl-wrap table').forEach(t=>{const hs=[...t.querySelectorAll('thead th')].map(th=>th.textContent.trim());t.querySelectorAll('tbody tr').forEach(tr=>{let i=0;[...tr.children].forEach(td=>{if(!td.hasAttribute('data-label'))td.setAttribute('data-label',hs[i]||'');i+=td.colSpan||1})})})}
 new MutationObserver(labelTables).observe($('#view'),{childList:true,subtree:true});labelTables();
 $('#moreBtn').addEventListener('click',()=>{const o=$('#moreBox').classList.toggle('open');$('#moreBtn').setAttribute('aria-expanded',String(o))});
@@ -791,7 +906,7 @@ function renewWa(u){
 function contractRow(u){
   const s=cstat(u), r=renewRent(u), up=r&&+u.rent&&r>+u.rent;
   return `<div class="row ${s.c}"><div class="mark"></div>
-    <div class="who"><div class="unit">${esc(label(u))}</div><div class="name">${esc(u.tenant)}</div>
+    <div class="who"><div class="unit" data-prof="${u.id}">${esc(label(u))}</div><div class="name">${esc(u.tenant)}</div>
       <div class="meta"><span>رقم العقد: <b class="num">${esc(u.contractNo)||'—'}</b></span><span>من <b class="num">${dmy(u.contractStart)}</b> إلى <b class="num">${dmy(u.contractEnd)}</b></span>${u.lessor?`<span>المؤجر: ${esc(u.lessor)}</span>`:''}</div>
       <div class="meta"><span>الإيجار الحالي: <b class="num">${u.rent?fmt(u.rent):'ناقص'}</b></span>${up?`<span class="rent-up">${+u.newRent>(+u.rent||0)?'بعد التجديد':'المقترح'}: <span class="num">${fmt(r)}</span> ريال ↑</span>`:''}${!vacant(u)&&!fam(u)?`<span class="pill rate ${rating(u).c}">${rating(u).t}</span>`:''}</div></div>
     <div class="side"><span class="pill ${s.c}">${s.t}</span>
@@ -1189,6 +1304,91 @@ function netByBuilding(y,m,prop){
   return `<div class="group-h"><span>صافي كل عمارة — من يناير لين ${MONTHS[m]} ${y}</span></div>
   <div class="tbl-wrap"><table><thead><tr><th>العمارة</th><th>الوحدات</th><th>الإيجار السنوي بالعقود</th><th>المحصّل</th><th>المصاريف</th><th>الصافي</th><th>أكبر مصروف</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
+
+function goTab(t,prop){state.tab=t;if(prop)state.prop=prop;try{localStorage.setItem('tab2',t)}catch(_){}render();scrollTo({top:0})}
+function greet(){const h=new Date().getHours();return h<12?'صباح الخير':'مساء الخير'}
+function tileOf(u){return tileCls(u)[0]}
+function renderHome(){
+  if(!state.loaded.u&&!state.units.length)return emptyMsg();
+  const t=today(), y=t.getFullYear(), m=t.getMonth(), all=state.units, U=all.filter(u=>!vacant(u)&&!fam(u));
+  const M=mStats(y,m,''), rate=M.exp?Math.min(100,Math.round(M.col/M.exp*100)):0;
+  const late=U.filter(u=>(days(u.due)??0)<0&&!promised(u)).sort((a,b)=>days(a.due)-days(b.due)), pr=U.filter(promised);
+  const lateAmt=late.reduce((a,u)=>a+overdueCount(u)*(inst(u)||0),0);
+  const nxt=U.filter(u=>{const k=days(u.due);return k!=null&&k>=0&&k<=10}).sort((a,b)=>days(a.due)-days(b.due));
+  const occ=all.length?Math.round((all.length-all.filter(vacant).length)/all.length*100):0;
+  const need=U.filter(u=>cstat(u).g==='need'), yes=need.filter(u=>u.renewStatus==='وافق — ينتظر العقد').length;
+  const rq=state.reqs.filter(r=>r.status!=='منتهي');
+  const lastP=state.pays.slice().sort((a,b)=>(b.date||'').localeCompare(a.date||'')).slice(0,5);
+  const nm=u=>String(u.tenant||'').split('(')[0].trim().split(' ').filter(w=>w!=='بن').slice(0,2).join(' ');
+  const wa=u=>u.phone?`<a class="mini" href="${waLink(u)}" target="_blank" rel="noopener">واتساب</a>`:'';
+  const li=(u,right,sub)=>`<div class="li"><div class="t"><b data-prof="${u.id}">${esc(label(u))}</b><span>${esc(sub||nm(u))}</span></div><div class="r">${right}</div></div>`;
+  const G={};all.forEach(u=>{const k=bName(u);(G[k]=G[k]||{p:u.prop,us:[]}).us.push(u)});
+  return `<div class="hello"><div><h2>${greet()}${who()?' يا '+esc(who()):''}</h2><div class="d">${['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'][t.getDay()]} ${dmy(iso(t))}</div></div>
+    <div class="qa">${state.canWrite?'<button class="btn primary" type="button" data-qa="pay">سجّل دفعة</button><button class="btn" type="button" data-qa="exp">مصروف</button>':''}<button class="btn" type="button" data-qa="wk">ملخص لفراس</button></div></div>
+  <div class="kp">
+    <div class="kc acc" data-go="units"><div class="l"><span>الإيجار السنوي</span><span>${U.length} مؤجرة</span></div><div class="v">${fmt(U.reduce((a,u)=>a+(+u.rent||0),0))}</div><div class="s">${all.length} وحدة · إشغال ${occ}%</div></div>
+    <div class="kc" data-go="reports"><div class="l"><span>تحصيل ${MONTHS[m]}</span><span>${rate}%</span></div><div class="v">${fmt(M.col)}</div><div class="s">من ${fmt(M.exp)} متوقع</div><div class="pbar"><i style="width:${rate}%"></i></div></div>
+    <div class="kc ${late.length?'bad':'good'}" data-go="due"><div class="l"><span>متأخر</span><span>${late.length} مستأجر</span></div><div class="v">${fmt(lateAmt)}</div><div class="s">${pr.length?pr.length+' عنده وعد بالسداد':'ريال'}</div></div>
+    <div class="kc" data-go="due"><div class="l"><span>يحل خلال 10 أيام</span><span>${nxt.length} دفعة</span></div><div class="v">${fmt(nxt.reduce((a,u)=>a+(inst(u)||0),0))}</div><div class="s">ريال</div></div>
+  </div>
+  <div class="hgrid">
+    <div class="panel"><h3>يحل قريب <small>خلال 10 أيام</small></h3>${nxt.length?nxt.slice(0,8).map(u=>li(u,`<span class="amt num">${inst(u)?fmt(inst(u)):'—'}</span><span class="pill warn">${dmy(u.due).slice(0,5)}</span>${wa(u)}`)).join('')+(nxt.length>8?`<div class="li"><span class="muted">و${nxt.length-8} غيرهم</span><button class="mini" type="button" data-go="due">الكل</button></div>`:''):'<p class="muted">ما فيه دفعات خلال 10 أيام.</p>'}</div>
+    <div class="panel"><h3>المتأخرين والوعود <small>${late.length+pr.length}</small></h3>${late.concat(pr).length?late.concat(pr).map(u=>li(u,`<span class="amt num">${fmt(overdueCount(u)*(inst(u)||0))}</span>${promised(u)?`<span class="pill prom">وعد ${dmy(u.promise).slice(0,5)}</span>`:broke(u)?'<span class="pill bad">أخلف الوعد</span>':`<span class="pill bad">${-days(u.due)} يوم</span>`}${wa(u)}`)).join(''):'<p class="muted">ما فيه متأخرات، الحمدلله.</p>'}</div>
+    <div class="panel"><h3>آخر الدفعات <small><button class="mini" type="button" data-go="pays">الكل</button></small></h3>${lastP.length?lastP.map(p=>{const u=all.find(z=>z.id===p.unitId);return u?li(u,`<span class="amt num">${fmt(p.amount)}</span><span class="muted">${dmy(p.date).slice(0,5)}</span>`):''}).join(''):'<p class="muted">ما فيه دفعات مسجلة.</p>'}</div>
+    <div class="panel"><h3>تحتاج متابعة</h3>
+      <div class="li"><div class="t"><b data-go="contracts">التجديد</b><span>${need.length} عقد يحتاج تجديد · ${yes} وافقوا</span></div><div class="r"><button class="mini" type="button" data-go="contracts">فتح</button></div></div>
+      <div class="li"><div class="t"><b data-go="expenses">الصيانة</b><span>${rq.length?rq.length+' طلب مفتوح':'ما فيه طلبات مفتوحة'}</span></div><div class="r"><button class="mini" type="button" data-go="expenses">فتح</button></div></div>
+      <div class="li"><div class="t"><b>الشواغر</b><span>${all.filter(vacant).length?all.filter(vacant).map(label).join('، '):'كل الوحدات مؤجرة'}</span></div></div>
+      <div class="li"><div class="t"><b>بيانات ناقصة</b><span>${U.filter(u=>!u.n).length} بدون عدد دفعات · ${U.filter(u=>!u.phone).length} بدون جوال · ${U.filter(u=>!u.rent).length} بدون إيجار</span></div></div>
+    </div>
+  </div>
+  <div class="group-h"><span>العمائر</span><span class="muted" style="font-size:.85rem">اضغط على أي عمارة</span></div>
+  <div class="bgrid">${Object.entries(G).map(([k,g])=>{const us=g.us, rent=us.filter(u=>!vacant(u)&&!fam(u)).reduce((a,u)=>a+(+u.rent||0),0), lt=us.filter(u=>tileOf(u)==='bad').length;
+    return `<div class="bc" data-go="units" data-prop="${esc(g.p)}"><div class="row3"><b>${esc(k)}</b><span class="s">${us.length} وحدة</span></div><div class="row3"><span class="num" style="font-weight:700">${fmt(rent)}</span><span class="s">${lt?'<span style="color:var(--bad)">'+lt+' متأخر</span>':'منتظم'}</span></div><div class="dots">${us.map(u=>`<i class="${tileOf(u)}" title="${esc(u.unit)}"></i>`).join('')}</div></div>`}).join('')}</div>`;
+}
+let calY=null,calM=null;
+function calMove(d){calDay=null;const t=today();if(calY==null){calY=t.getFullYear();calM=t.getMonth()}calM+=d;while(calM<0){calM+=12;calY--}while(calM>11){calM-=12;calY++}render()}
+let calDay=null;
+function renderCal(){
+  const t=today();if(calY==null){calY=t.getFullYear();calM=t.getMonth()}
+  const y=calY,m=calM,U=filtered().filter(u=>!vacant(u)&&!fam(u)&&u.due&&inst(u)&&dueInMonth(u,y,m));
+  const ev={};U.forEach(u=>{const dd=Math.min(parse(u.due).getDate(),new Date(y,m+1,0).getDate());(ev[dd]=ev[dd]||[]).push(u)});
+  const key=y+'-'+pad(m+1);
+  const paidIds=new Set(state.pays.filter(p=>(p.forDue||'').startsWith(key)||(p.date||'').startsWith(key)).map(p=>p.unitId));
+  const st=(u,d)=>paidIds.has(u.id)?'paid':(new Date(y,m,d)<t&&(days(u.due)??0)<0)?'bad':'';
+  const first=new Date(y,m,1).getDay(), nd=new Date(y,m+1,0).getDate(), tot=U.reduce((a,u)=>a+inst(u),0);
+  if(calDay==null||calDay>nd||!ev[calDay]){const isCur=y===t.getFullYear()&&m===t.getMonth();const ks=Object.keys(ev).map(Number).sort((a,b)=>a-b);calDay=(isCur&&ev[t.getDate()])?t.getDate():(ks.find(k=>!isCur||k>=t.getDate())||ks[0]||null)}
+  let cells='';for(let i=0;i<first;i++)cells+='<div class="c o"></div>';
+  for(let d=1;d<=nd;d++){const L=ev[d]||[], isT=y===t.getFullYear()&&m===t.getMonth()&&d===t.getDate(), sum=L.reduce((a,u)=>a+inst(u),0), nb=L.filter(u=>st(u,d)==='bad').length;
+    cells+=`<div class="c ${isT?'td':''} ${d===calDay?'sel':''}" data-calday="${d}"><div class="n"><b>${d}</b>${sum?`<span class="num">${fmt(sum)}</span>`:''}</div>${L.slice(0,3).map(u=>`<div class="ev ${st(u,d)}" title="${esc(label(u)+' · '+(u.tenant||'')+' · '+fmt(inst(u)))}">${esc((u.unit||'').replace('شقة ','ش').replace('فيلا ','ف'))} ${esc(bName(u).replace('عمارة ','').replace('فلل ',''))}</div>`).join('')}${L.length>3?`<div class="more-ev">+${L.length-3} ثانية</div>`:''}${L.length?`<span class="cnt ${nb?'bad':''}">${L.length}</span>`:''}</div>`}
+  const DL=calDay?(ev[calDay]||[]):[];
+  const nm=u=>String(u.tenant||'').split('(')[0].trim().split(' ').filter(w=>w!=='بن').slice(0,2).join(' ');
+  return `<div class="tools"><div class="seg"><button type="button" data-dview="list" aria-pressed="false">قائمة</button><button type="button" data-dview="cal" aria-pressed="true">تقويم الشهر</button></div></div>
+  <div class="calh"><button class="btn" type="button" data-calnav="-1">→ الشهر اللي قبل</button><div style="text-align:center"><b>${MONTHS[m]} ${y}</b><div class="muted" style="font-size:.85rem">${U.length} دفعة · ${fmt(tot)} ريال</div></div><button class="btn" type="button" data-calnav="1">الشهر الجاي ←</button></div>
+  <div class="cal">${['أحد','اثنين','ثلاثاء','أربعاء','خميس','جمعة','سبت'].map(x=>`<div class="dn">${x}</div>`).join('')}${cells}</div>
+  ${calDay?`<div class="panel dayl"><h3>${calDay} ${MONTHS[m]} <small>${DL.length} دفعة · ${fmt(DL.reduce((a,u)=>a+inst(u),0))} ريال</small></h3>${DL.map(u=>`<div class="li"><div class="t"><b data-prof="${u.id}">${esc(label(u))}</b><span>${esc(nm(u))}</span></div><div class="r"><span class="amt num">${fmt(inst(u))}</span>${st(u,calDay)==='paid'?'<span class="pill good">انسدد</span>':st(u,calDay)==='bad'?'<span class="pill bad">متأخر</span>':''}${u.phone?`<a class="mini" href="${waLink(u)}" target="_blank" rel="noopener">واتساب</a>`:''}</div></div>`).join('')||'<p class="muted">ما فيه دفعات هذا اليوم.</p>'}</div>`:''}
+  <p class="hint">اضغط على أي يوم يطلع لك تحت مين عليه دفعة. الأخضر انسدد، والأحمر متأخر.</p>`;
+}
+function openProf(id){
+  const u=state.units.find(x=>x.id===id);if(!u)return;
+  const P=state.pays.filter(p=>p.unitId===id).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  const X=state.exps.filter(x=>x.unitId===id).sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  const H=state.hist.filter(h=>h.unitId===id), R=state.reqs.filter(r=>r.loc===bName(u)&&(String(r.unitText).match(/\d+/)||[''])[0]===(String(u.unit).match(/\d+/)||['x'])[0]);
+  const [c,tx]=tileCls(u), cs=cstat(u), rt=(!vacant(u)&&!fam(u))?rating(u):null;
+  const g=(k,v)=>`<div>${k}<b>${v||'—'}</b></div>`;
+  $('#profBox').innerHTML=`<div class="pf-h"><div><h2>${esc(label(u))}</h2><div class="muted">${esc(u.tenant||'شاغرة')}${u.nationality?' · '+esc(u.nationality):''}</div></div><div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end"><span class="pill ${c==='bad'?'bad':c==='warn'?'warn':c==='prom'?'prom':c==='good'?'good':'none'}">${esc(tx)}</span>${rt?`<span class="pill ${rt.c}">${esc(rt.t)}</span>`:''}</div></div>
+  <div class="pf-act">${state.canWrite&&!vacant(u)&&!fam(u)?`<button class="btn primary" type="button" data-pa="pay">سجّل دفعة</button>`:''}${u.phone?`<a class="btn" href="${waLink(u)}" target="_blank" rel="noopener">واتساب</a><a class="btn" href="tel:${esc(u.phone)}">اتصال</a>`:''}<button class="btn" type="button" data-pa="stmt">كشف حساب</button>${state.canWrite?`<button class="btn" type="button" data-pa="edit">تعديل</button>`:''}${vacant(u)?`<button class="btn" type="button" data-pa="ad">إعلان</button>`:''}${u.contractUrl?`<a class="btn" href="${esc(u.contractUrl)}" target="_blank" rel="noopener">العقد</a>`:''}</div>
+  <div class="pf-g">${g('الجوال','<span class="num">'+esc(u.phone||'')+'</span>')}${g('الإيجار السنوي',u.rent?fmt(u.rent)+' ريال':'')}${g('الدفعات',u.n?(u.n==12?'شهري':u.n+' بالسنة')+(inst(u)?' · '+fmt(inst(u)):''):'')}${g('الدفعة القادمة',dmy(u.due))}${g('العقد',esc(u.contractNo||''))}${g('مدة العقد',u.contractStart||u.contractEnd?dmy(u.contractStart)+' ← '+dmy(u.contractEnd):'')}${g('حالة العقد',esc(cs.t))}${g('بعد التجديد',renewRent(u)?fmt(renewRent(u)):'')}${g('المؤجر',esc(u.lessor||''))}</div>
+  ${u.promise?`<div class="notice" style="margin:0">وعد بالسداد: ${dmy(u.promise)}${u.promiseNote?' — '+esc(u.promiseNote):''}</div>`:''}
+  ${u.note?`<div class="pf-s"><h4>ملاحظات</h4><div class="uhist" style="white-space:pre-wrap">${esc(u.note)}</div></div>`:''}
+  <div class="pf-s"><h4>الدفعات (${P.length} · ${fmt(P.reduce((a,p)=>a+(+p.amount||0),0))} ريال)</h4>${P.length?P.slice(0,12).map(p=>`<div class="li"><div class="t"><b>${dmy(p.date)}</b><span>${esc(p.method||'')}${p.forDue?' · عن دفعة '+dmy(p.forDue):''}</span></div><div class="r"><span class="amt num">${fmt(p.amount)}</span></div></div>`).join(''):'<p class="muted">ما فيه دفعات مسجلة.</p>'}</div>
+  ${X.length?`<div class="pf-s"><h4>المصاريف على الوحدة (${fmt(X.reduce((a,x)=>a+(+x.amount||0),0))} ريال)</h4>${X.map(x=>`<div class="li"><div class="t"><b>${esc(x.category||'')}</b><span>${dmy(x.date)} · ${esc(x.note||'')}</span></div><div class="r"><span class="amt num">${fmt(x.amount)}</span></div></div>`).join('')}</div>`:''}
+  ${R.length?`<div class="pf-s"><h4>طلبات الصيانة</h4>${R.map(r=>`<div class="li"><div class="t"><b>${esc(r.desc||'')}</b><span>${esc(String(r.createdAt||'').slice(0,10))}</span></div><div class="r"><span class="pill ${r.status==='منتهي'?'good':'warn'}">${esc(r.status||'')}</span></div></div>`).join('')}</div>`:''}
+  ${H.length?`<div class="pf-s"><h4>المستأجرين السابقين</h4>${H.map(h=>`<div class="li"><div class="t"><b>${esc(h.tenant||'')}</b><span>${dmy(h.contractStart)} ← ${dmy(h.leftAt||h.contractEnd)}</span></div><div class="r"><span class="num">${h.rent?fmt(h.rent):''}</span></div></div>`).join('')}</div>`:''}
+  <div class="foot"><span></span><button class="btn" type="button" data-close>إغلاق</button></div>`;
+  $('#profBox').dataset.id=id;$('#profDlg').showModal();
+}
+$('#profDlg').addEventListener('click',e=>{const id=$('#profBox').dataset.id;if(e.target.closest('[data-close]'))return $('#profDlg').close();const b=e.target.closest('[data-pa]');if(!b)return;const k=b.dataset.pa;$('#profDlg').close();if(k==='pay')openPay(id);else if(k==='stmt')openStmt(id);else if(k==='edit')openUnit(id);else if(k==='ad')openAd(id)});
 let promU=null;
 function openPromise(id){promU=state.units.find(x=>x.id===id);if(!promU)return;
   const d=new Date();d.setDate(d.getDate()+7);
@@ -1199,6 +1399,14 @@ $('#promForm').addEventListener('submit',async e=>{e.preventDefault();if(!promU|
 $('#promClear').addEventListener('click',async()=>{if(!promU||!state.db)return;
   try{await state.db.doc('units/'+promU.id).update({promise:'',promiseNote:''});$('#promDlg').close();toast('انمسح الوعد')}catch(_){toast('ما انمسح')}});
 const pendingDel=new Set();
+$('#view').addEventListener('click',e=>{
+  const p=e.target.closest('[data-prof]');if(p&&!e.target.closest('a,select')){openProf(p.dataset.prof);e.stopImmediatePropagation();return}
+  const g=e.target.closest('[data-go]');if(g){goTab(g.dataset.go,g.dataset.prop);return}
+  const dv=e.target.closest('[data-dview]');if(dv){state.dview=dv.dataset.dview;render();return}
+  const cn=e.target.closest('[data-calnav]');if(cn){calMove(+cn.dataset.calnav);return}
+  const cd=e.target.closest('[data-calday]');if(cd){calDay=+cd.dataset.calday;render();return}
+  const qa=e.target.closest('[data-qa]');if(qa){const k=qa.dataset.qa;if(k==='pay')openPay();else if(k==='exp')openExp(null);else if(k==='bc')$('#bcOpen').click();else if(k==='wk')$('#wkOpen').click();return}
+},true);
 $('#view').addEventListener('click',async e=>{
   const b=e.target.closest('button');if(!b)return;
   if(b.dataset.pay)return openPay(b.dataset.pay);
@@ -1222,7 +1430,7 @@ $('#view').addEventListener('click',async e=>{
     try{await state.db.doc('payments/'+id).delete();toast('انحذفت الدفعة')}catch(_){toast('ما انحذفت')}}
 });
 
-try{const t=localStorage.getItem('tab');if(t)state.tab=t;state.uview=localStorage.getItem('uview')||'list'}catch(_){state.uview='list'}
+try{const t=localStorage.getItem('tab2');state.tab=t||'home';state.uview=localStorage.getItem('uview')||'list'}catch(_){state.uview='list'}
 render();
 
 /* ---------- local storage ---------- */
