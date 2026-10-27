@@ -4,8 +4,8 @@
  "lang": "ar",
  "dir": "rtl",
  "display": "standalone",
- "background_color": "#F5F6F8",
- "theme_color": "#F5F6F8",
+ "background_color": "#FFFFFF",
+ "theme_color": "#FFFFFF",
  "icons": [
   {
    "src": "icon-192.png",

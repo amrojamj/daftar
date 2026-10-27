@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>دفتر إيجارات جمجوم</title>
-<meta name="theme-color" content="#F5F6F8">
+<meta name="theme-color" content="#FFFFFF">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -13,30 +13,30 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap">
 <style>
 /* Layout: one column ledger — summary strip, tabs, then due-date rows like a collector's daybook */
 :root{
-  --bg:#F5F6F8; --surface:#FFFFFF; --sunk:#F0F2F5; --ink:#0F172A; --muted:#667085; --line:#E7EAF0;
-  --accent:#4F46E5; --accent-ink:#FFFFFF; --accent-soft:#EEF0FF; --gold:#4F46E5; --gold-soft:#EEF0FF;
-  --grad:linear-gradient(135deg,#6366F1 0%,#4F46E5 55%,#7C3AED 100%);
-  --side:#FFFFFF; --side-ink:#344054; --side-mute:#98A2B3; --side-act:#EEF0FF;
-  --shadow:0 1px 2px rgba(16,24,40,.04),0 1px 3px rgba(16,24,40,.06);
-  --shadow-h:0 4px 12px rgba(16,24,40,.08),0 12px 32px rgba(16,24,40,.08);
-  --bad:#E11D48; --bad-soft:#FFEEF1; --warn:#C2410C; --warn-soft:#FFF3E8; --good:#059669; --good-soft:#E7F8F1;
-  --nav:rgba(255,255,255,.86);
-  --f-display:"Readex Pro",Tahoma,sans-serif;
-  --f-body:"Readex Pro",Tahoma,"Segoe UI",sans-serif;
+  --bg:#FFFFFF; --surface:#F7F7F7; --sunk:#EFEFEF; --ink:#0A0A0A; --muted:#737373; --line:#E8E8E8; --field:#FFFFFF;
+  --accent:#0A0A0A; --accent-ink:#FFFFFF; --accent-soft:#EDEDED; --gold:#0A0A0A; --gold-soft:#EDEDED;
+  --grad:#0A0A0A; --hero:#0A0A0A; --hero-ink:#FFFFFF; --hero-mute:rgba(255,255,255,.62); --hero-bar:#333333;
+  --side:#FFFFFF; --side-ink:#404040; --side-mute:#A3A3A3; --side-act:#F2F2F2;
+  --shadow:none;
+  --shadow-h:0 8px 24px rgba(0,0,0,.07);
+  --bad:#E5484D; --bad-soft:#FDECEC; --warn:#C27A00; --warn-soft:#FFF4E0; --good:#2E9E5B; --good-soft:#E7F6EC;
+  --nav:rgba(255,255,255,.92);
+  --f-display:"Cairo",Tahoma,sans-serif;
+  --f-body:"Cairo",Tahoma,"Segoe UI",sans-serif;
   --r:20px; --ease:cubic-bezier(.2,.8,.2,1); color-scheme:light;
 }
 :root[data-theme="dark"]{
-  --bg:#0B0D12; --surface:#13161D; --sunk:#1A1E27; --ink:#E8EBF1; --muted:#8C94A6; --line:#232836;
-  --accent:#8B93FF; --accent-ink:#0B0D12; --accent-soft:#1E2142; --gold:#8B93FF; --gold-soft:#1E2142;
-  --grad:linear-gradient(135deg,#818CF8 0%,#6366F1 55%,#8B5CF6 100%);
-  --side:#101319; --side-ink:#C9CFDA; --side-mute:#7A8294; --side-act:#1E2142;
-  --shadow:0 0 0 1px rgba(255,255,255,.02); --shadow-h:0 8px 30px rgba(0,0,0,.45);
-  --bad:#FB7185; --bad-soft:#3A1520; --warn:#FDBA74; --warn-soft:#3A2515; --good:#34D399; --good-soft:#0F2E24;
-  --nav:rgba(19,22,29,.86); color-scheme:dark;
+  --bg:#000000; --surface:#121212; --sunk:#1C1C1C; --ink:#F5F5F5; --muted:#9A9A9A; --line:#262626; --field:#0A0A0A;
+  --accent:#FFFFFF; --accent-ink:#000000; --accent-soft:#262626; --gold:#FFFFFF; --gold-soft:#262626;
+  --grad:#FFFFFF; --hero:#FFFFFF; --hero-ink:#0A0A0A; --hero-mute:rgba(0,0,0,.55); --hero-bar:#DADADA;
+  --side:#000000; --side-ink:#D4D4D4; --side-mute:#737373; --side-act:#1C1C1C;
+  --shadow:none; --shadow-h:0 8px 30px rgba(0,0,0,.6);
+  --bad:#FF6369; --bad-soft:#3B1416; --warn:#F5B547; --warn-soft:#33250A; --good:#4CC38A; --good-soft:#0E2A1C;
+  --nav:rgba(18,18,18,.92); color-scheme:dark;
 }
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55;direction:rtl}
@@ -489,6 +489,115 @@ th{background:var(--sunk);font-weight:600}
 .hello h2{display:none}.hello{margin-top:-6px}
 @media (max-width:640px){.kc .l span+span{display:none}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+<style>
+body{background:var(--bg);font-family:var(--f-body);font-size:15px;line-height:1.6}
+h1,h2,h3,.num,.amt,.kc .v,.stat .v{letter-spacing:0}
+header h1#pageTitle{font-weight:800;font-size:1.7rem}
+.kc,.panel,.bc,.row,.bmap,.camp,.req,.kgrid .k1,.cal .c:not(.o),.cmini div,.bars,.rc{background:var(--surface);border-color:transparent!important;box-shadow:none;border-radius:18px}
+.tbl-wrap{background:var(--surface);border-color:transparent!important;box-shadow:none;border-radius:18px}
+.tile{background:var(--bg);border-color:var(--line)!important;border-top-color:var(--lc)!important;box-shadow:none;border-radius:14px}
+.t-vac{background:var(--surface)}
+.li{border-bottom-color:var(--line)}
+th{background:var(--sunk)}
+input,select,textarea,.rsel{background:var(--field);border-color:var(--line)}
+input:focus,select:focus,textarea:focus{border-color:var(--ink);box-shadow:0 0 0 3px var(--accent-soft)}
+button.btn,a.btn,label.btn{background:var(--bg);border:1px solid var(--line);border-radius:999px;font-weight:600;padding-inline:16px}
+button.btn:hover,a.btn:hover,label.btn:hover{background:var(--surface);border-color:var(--line)}
+button.btn.primary,a.btn.primary,.mini.p{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);box-shadow:none}
+button.btn.primary:hover,a.btn.primary:hover{background:var(--accent);filter:none;opacity:.88}
+:root[data-theme="dark"] button.btn.primary,:root[data-theme="dark"] a.btn.primary,:root[data-theme="dark"] .mini.p{color:var(--accent-ink)}
+button.btn.danger{background:var(--bad-soft);border-color:transparent;color:var(--bad)}
+.mini{border-radius:999px;background:var(--bg);border:1px solid var(--line);font-weight:600;padding:5px 11px}
+.mini:hover{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip{border-radius:999px;background:var(--bg);border-color:var(--line);color:var(--muted);font-weight:600}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.pill{border-radius:999px;font-weight:700;font-size:.72rem;padding:2px 10px}
+.pill.prom,.cal .ev,.cal .cnt{background:var(--ink);color:var(--bg)}
+.row.prom .mark,.t-prom,.lg-prom{--lc:var(--ink);--lb:var(--accent-soft)}
+.row.prom .mark{background:var(--ink)}
+.row .mark{width:3px}
+.syncpill{background:var(--surface);border:0;font-weight:600}
+.seg{background:var(--surface);border-radius:999px;padding:3px}
+.seg button{border-radius:999px}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);box-shadow:none}
+dialog{background:var(--bg);border-radius:24px;box-shadow:0 30px 80px rgba(0,0,0,.25)}
+dialog::backdrop{background:rgba(0,0,0,.4)}
+.dlg .foot{background:var(--bg)}
+.toast{background:var(--ink);color:var(--bg);border-radius:999px;font-weight:600}
+.notice{background:var(--warn-soft);color:var(--warn);border-radius:16px}
+.empty{background:var(--bg);border:1.5px dashed var(--line);border-radius:18px}
+.pbar{background:var(--sunk)}.pbar i{background:var(--ink)}
+.occ{background:var(--sunk)}.occ i{background:var(--ink)}
+.bars .col i.c,.legend .c::before{background:var(--ink)}
+.dots i.prom{background:var(--ink)}
+.rc-h{border-bottom-color:var(--ink)}
+.rc-amt{background:var(--ink);color:var(--bg)}
+.rent-up{color:var(--good)}
+.dlg a:not(.btn):not(.mini){color:var(--ink);text-decoration:underline;text-underline-offset:3px}
+.dlg a.btn,.dlg a.mini{text-decoration:none;color:var(--ink)}
+.dlg a.btn.primary{color:var(--accent-ink)}
+.group-h{font-weight:800;font-size:1.05rem}
+.panel h3{font-weight:800;font-size:1.02rem}
+.panel h3 small{font-weight:600}
+.kc .l{font-weight:600;font-size:.8rem}
+.kc .v{font-weight:800;font-size:1.55rem}
+.kc.good .v{color:var(--ink)}
+.kc[data-go]:hover,.bc:hover,.row:hover,.tile:hover{box-shadow:var(--shadow-h)}
+.hello{margin:-8px 0 12px}
+.hello .d{color:var(--muted);font-size:.88rem;font-weight:600}
+.hx{display:grid;grid-template-columns:minmax(0,1.7fr) repeat(3,minmax(0,1fr));gap:12px;align-items:stretch}
+.hero{background:var(--hero);color:var(--hero-ink);border-radius:24px;padding:20px 22px;display:flex;flex-direction:column;gap:6px;cursor:pointer;grid-row:1;grid-column:1;transition:transform .25s var(--ease)}
+.hero:active{transform:scale(.985)}
+.hero .hl{display:flex;justify-content:space-between;align-items:center;color:var(--hero-mute);font-size:.85rem;font-weight:600}
+.hero .hp{background:var(--hero-bar);color:var(--hero-ink);border-radius:999px;padding:1px 10px;font-weight:700;font-size:.78rem}
+.hero .hv{display:flex;align-items:baseline;gap:8px}
+.hero .v{font-family:var(--f-display);font-weight:800;font-size:2.4rem;line-height:1.15;font-variant-numeric:tabular-nums}
+.hero .hv small{color:var(--hero-mute);font-size:.9rem;font-weight:600}
+.hbar{height:8px;border-radius:99px;background:var(--hero-bar);overflow:hidden;margin-top:6px}
+.hbar i{display:block;height:100%;border-radius:99px;background:var(--hero-ink);transition:width .9s var(--ease)}
+.hero .hr{display:flex;justify-content:space-between;color:var(--hero-mute);font-size:.8rem;font-variant-numeric:tabular-nums}
+.qa2{grid-row:2;grid-column:1/-1;display:flex;gap:26px;justify-content:flex-start;padding:6px 4px 2px}
+.qb{display:flex;flex-direction:column;align-items:center;gap:6px;background:none;border:0;padding:0;cursor:pointer;color:var(--ink);font:600 .8rem var(--f-body);min-width:62px}
+.qb i{width:54px;height:54px;border-radius:50%;background:var(--surface);display:grid;place-items:center;transition:transform .15s var(--ease),background .2s}
+.qb i svg{width:22px;height:22px}
+.qb:hover i{background:var(--sunk)}
+.qb:active i{transform:scale(.92)}
+.qb:first-child i{background:var(--ink);color:var(--bg)}
+.hx .kc{justify-content:center}
+.hgrid{margin-top:18px}
+.tabs .brand i{background:var(--ink);color:var(--bg);border-radius:12px;font-weight:800}
+@media (min-width:1024px){
+  .tabs{background:var(--side);border-left:1px solid var(--line)}
+  .tab{font-weight:600;border-radius:999px}
+  .tab[aria-selected="true"]{background:var(--ink);color:var(--bg)}
+  .tab[aria-selected="true"] .ti{opacity:1}
+}
+@media (min-width:641px) and (max-width:1023px){
+  .tabs{border-radius:999px;border-color:var(--line);box-shadow:none;background:var(--nav)}
+  .tab{border-radius:999px}
+  .tab[aria-selected="true"]{background:var(--ink);color:var(--bg)}
+  .hx{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .hero{grid-column:1/-1}
+  .qa2{grid-row:auto;justify-content:center}
+}
+@media (max-width:640px){
+  header h1#pageTitle{font-size:1.4rem}
+  .hx{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .hero{grid-column:1/-1;padding:18px;border-radius:22px}
+  .hero .v{font-size:2rem}
+  .qa2{grid-row:auto;justify-content:space-around;gap:0;padding:10px 0 6px}
+  .hx .kc{padding:12px 10px;border-radius:16px}
+  .hx .kc .v{font-size:1.02rem}
+  .hx .kc .s{font-size:.68rem;line-height:1.35}
+  .hx .kc .l{font-size:.72rem}
+  .tabs{border-radius:22px;background:var(--nav);border:1px solid var(--line);box-shadow:0 8px 24px rgba(0,0,0,.08)}
+  .tab[aria-selected="true"]{background:transparent;color:var(--ink);font-weight:800}
+  .tab[aria-selected="true"] .ti{stroke-width:2.4}
+  .tab:not([aria-selected="true"]){color:var(--muted)}
+  dialog{border-radius:24px 24px 0 0}
+}
+
 </style>
 </head><body>
 
@@ -1417,7 +1526,7 @@ function netByBuilding(y,m,prop){
   <div class="tbl-wrap"><table><thead><tr><th>العمارة</th><th>الوحدات</th><th>الإيجار السنوي بالعقود</th><th>المحصّل</th><th>المصاريف</th><th>الصافي</th><th>أكبر مصروف</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 
-function countUp(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;document.querySelectorAll('#view .kc .v').forEach(el=>{const tx=el.textContent,n=+tx.replace(/,/g,'');if(!n||isNaN(n))return;const t0=performance.now(),D=650;const f=t=>{const p=Math.min(1,(t-t0)/D),e=1-Math.pow(1-p,3);el.textContent=fmt(n*e);if(p<1)requestAnimationFrame(f);else el.textContent=tx};requestAnimationFrame(f)})}
+function countUp(){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;document.querySelectorAll('#view .kc .v,#view .hero .v').forEach(el=>{const tx=el.textContent,n=+tx.replace(/,/g,'');if(!n||isNaN(n))return;const t0=performance.now(),D=650;const f=t=>{const p=Math.min(1,(t-t0)/D),e=1-Math.pow(1-p,3);el.textContent=fmt(n*e);if(p<1)requestAnimationFrame(f);else el.textContent=tx};requestAnimationFrame(f)})}
 function goTab(t,prop){state.tab=t;if(prop)state.prop=prop;try{localStorage.setItem('tab2',t)}catch(_){}render();scrollTo({top:0})}
 function greet(){const h=new Date().getHours();return h<12?'صباح الخير':'مساء الخير'}
 function tileOf(u){return tileCls(u)[0]}
@@ -1436,13 +1545,16 @@ function renderHome(){
   const wa=u=>u.phone?`<a class="mini" href="${waLink(u)}" target="_blank" rel="noopener">واتساب</a>`:'';
   const li=(u,right,sub)=>`<div class="li"><div class="t"><b data-prof="${u.id}">${esc(label(u))}</b><span>${esc(sub||nm(u))}</span></div><div class="r">${right}</div></div>`;
   const G={};all.forEach(u=>{const k=bName(u);(G[k]=G[k]||{p:u.prop,us:[]}).us.push(u)});
-  return `<div class="hello"><div><h2>${greet()}${who()?' يا '+esc(who()):''}</h2><div class="d">${['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'][t.getDay()]} ${dmy(iso(t))}</div></div>
-    <div class="qa">${state.canWrite?'<button class="btn primary" type="button" data-qa="pay">سجّل دفعة</button><button class="btn" type="button" data-qa="exp">مصروف</button>':''}<button class="btn" type="button" data-qa="wk">ملخص لفراس</button></div></div>
-  <div class="kp">
-    <div class="kc acc" data-go="units"><div class="l"><span>الإيجار السنوي</span><span>${U.length} مؤجرة</span></div><div class="v">${fmt(U.reduce((a,u)=>a+(+u.rent||0),0))}</div><div class="s">${all.length} وحدة · إشغال ${occ}%</div></div>
-    <div class="kc" data-go="reports"><div class="l"><span>تحصيل ${MONTHS[m]}</span><span>${rate}%</span></div><div class="v">${fmt(M.col)}</div><div class="s">من ${fmt(M.exp)} متوقع</div><div class="pbar"><i style="width:${rate}%"></i></div></div>
-    <div class="kc ${late.length?'bad':'good'}" data-go="due"><div class="l"><span>متأخر</span><span>${late.length} مستأجر</span></div><div class="v">${fmt(lateAmt)}</div><div class="s">${pr.length?pr.length+' عنده وعد بالسداد':'ريال'}</div></div>
-    <div class="kc" data-go="due"><div class="l"><span>يحل خلال 10 أيام</span><span>${nxt.length} دفعة</span></div><div class="v">${fmt(nxt.reduce((a,u)=>a+(inst(u)||0),0))}</div><div class="s">ريال</div></div>
+  const dt=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'][t.getDay()]+' '+dmy(iso(t));
+  const qb=(k,ic,tx)=>`<button type="button" class="qb" data-qa="${k}"><i>${ic}</i><span>${tx}</span></button>`;
+  const IC={pay:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',bc:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 1 1 12 0c0 6 2.5 8 2.5 8h-17S6 15 6 9"/><path d="M10 20.5h4"/></svg>',exp:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg>',wk:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M5 7h14M5 12h14M5 17h9"/></svg>'};
+  return `<div class="hello"><div class="d">${dt}</div></div>
+  <div class="hx">
+    <div class="hero" data-go="reports"><div class="hl"><span>تحصيل ${MONTHS[m]}</span><span class="hp">${rate}%</span></div><div class="hv"><span class="v num">${fmt(M.col)}</span><small>ريال</small></div><div class="hbar"><i style="width:${rate}%"></i></div><div class="hr"><span>المتوقع ${fmt(M.exp)}</span><span>الباقي ${fmt(Math.max(0,M.exp-M.col))}</span></div></div>
+    <div class="qa2">${state.canWrite?qb('pay',IC.pay,'دفعة'):''}${qb('bc',IC.bc,'تذكير')}${state.canWrite?qb('exp',IC.exp,'مصروف'):''}${qb('wk',IC.wk,'ملخص')}</div>
+    <div class="kc ${late.length?'bad':'good'}" data-go="due"><div class="l"><span>متأخر</span></div><div class="v">${fmt(lateAmt)}</div><div class="s">${late.length} مستأجر${pr.length?' · '+pr.length+' بوعد':''}</div></div>
+    <div class="kc" data-go="due"><div class="l"><span>خلال 10 أيام</span></div><div class="v">${fmt(nxt.reduce((a,u)=>a+(inst(u)||0),0))}</div><div class="s">${nxt.length} دفعة</div></div>
+    <div class="kc" data-go="units"><div class="l"><span>الإيجار السنوي</span></div><div class="v">${fmt(U.reduce((a,u)=>a+(+u.rent||0),0))}</div><div class="s">${all.length} وحدة · إشغال ${occ}%</div></div>
   </div>
   <div class="hgrid">
     <div class="panel"><h3>يحل قريب <small>خلال 10 أيام</small></h3>${nxt.length?nxt.slice(0,8).map(u=>li(u,`<span class="amt num">${inst(u)?fmt(inst(u)):'—'}</span><span class="pill warn">${dmy(u.due).slice(0,5)}</span>${wa(u)}`)).join('')+(nxt.length>8?`<div class="li"><span class="muted">و${nxt.length-8} غيرهم</span><button class="mini" type="button" data-go="due">الكل</button></div>`:''):'<p class="muted">ما فيه دفعات خلال 10 أيام.</p>'}</div>
