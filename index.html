@@ -1,10 +1,10 @@
 <!doctype html>
 <html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>دفتر إيجارات جمجوم</title>
-<meta name="theme-color" content="#2F6E7A">
+<meta name="theme-color" content="#0A0E13">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="دفتر جمجوم">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -13,31 +13,29 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Readex+Pro:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Kufi+Arabic:wght@500;600;700;800&family=Tajawal:wght@400;500;700;800&display=swap">
 <style>
 /* Layout: one column ledger — summary strip, tabs, then due-date rows like a collector's daybook */
 :root{
-  --bg:#F3F1EC; --surface:#FFFFFF; --sunk:#EEEBE4; --ink:#1D2A33; --muted:#69737D; --line:#E4DFD6;
-  --accent:#1F5F6B; --accent-ink:#FFFFFF; --accent-soft:#E0EDEF; --gold:#B5832F; --gold-soft:#F6ECDA;
-  --side:#163A44; --side-ink:#D6E4E7; --side-mute:#8FB0B7; --side-act:#21515D;
-  --shadow:0 1px 2px rgba(20,30,35,.05),0 6px 20px rgba(20,30,35,.05);
-  --bad:#B9473F; --bad-soft:#FAEBE8; --warn:#9C6511; --warn-soft:#FBF1DD; --good:#2E7656; --good-soft:#E4F2EA;
-  --f-display:"Readex Pro","IBM Plex Sans Arabic",Tahoma,sans-serif;
-  --f-body:"IBM Plex Sans Arabic",Tahoma,"Segoe UI",sans-serif;
-  --r:14px;
+  --bg:#0A0E13; --surface:#121820; --sunk:#19212B; --ink:#EEE9DF; --muted:#98A1AC; --line:#222C38;
+  --accent:#D4AF6A; --accent-ink:#17120A; --accent-soft:#2A2417; --gold:#D4AF6A; --gold-soft:#2A2417;
+  --gold-grad:linear-gradient(135deg,#E2C27E 0%,#C59A4C 45%,#8E6A2C 100%);
+  --side:#06090D; --side-ink:#C9D1D9; --side-mute:#7D8792; --side-act:rgba(212,175,106,.12);
+  --shadow:none; --glow:rgba(212,175,106,.10);
+  --bad:#F08A7E; --bad-soft:#36191A; --warn:#E9BC6C; --warn-soft:#33281A; --good:#6FCF9E; --good-soft:#132C20;
+  --nav:rgba(12,17,23,.92);
+  --f-display:"Noto Kufi Arabic","Tajawal",Tahoma,sans-serif;
+  --f-body:"Tajawal","Noto Kufi Arabic",Tahoma,"Segoe UI",sans-serif;
+  --r:18px; color-scheme:dark;
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#15191D; --surface:#1E2328; --sunk:#262C32; --ink:#E4E8EB; --muted:#9EA8B1; --line:#323940;
-  --accent:#7DB9C4; --accent-ink:#0E1E22; --accent-soft:#1D343A; --gold:#D9AE63; --gold-soft:#3A2F1C;
-  --side:#10171B; --side-ink:#CFDDE1; --side-mute:#7E969C; --side-act:#1E3238;
-  --shadow:0 1px 2px rgba(0,0,0,.3);
-  --bad:#E8968C; --bad-soft:#3A2624; --warn:#E2B76A; --warn-soft:#382D1C; --good:#83C7A2; --good-soft:#1E342A; color-scheme:dark}}
-:root[data-theme="dark"]{
-  --bg:#15191D; --surface:#1E2328; --sunk:#262C32; --ink:#E4E8EB; --muted:#9EA8B1; --line:#323940;
-  --accent:#7DB9C4; --accent-ink:#0E1E22; --accent-soft:#1D343A; --gold:#D9AE63; --gold-soft:#3A2F1C;
-  --side:#10171B; --side-ink:#CFDDE1; --side-mute:#7E969C; --side-act:#1E3238;
-  --shadow:0 1px 2px rgba(0,0,0,.3);
-  --bad:#E8968C; --bad-soft:#3A2624; --warn:#E2B76A; --warn-soft:#382D1C; --good:#83C7A2; --good-soft:#1E342A; color-scheme:dark}
+:root[data-theme="light"]{
+  --bg:#F7F3EA; --surface:#FFFFFF; --sunk:#F1EBDF; --ink:#13171C; --muted:#6C7077; --line:#E8E0D0;
+  --accent:#9C7426; --accent-ink:#FFFFFF; --accent-soft:#F4EAD6; --gold:#B48A3C; --gold-soft:#F4EAD6;
+  --side:#0D1218; --side-ink:#CCD3DA; --side-mute:#7D8792; --side-act:rgba(212,175,106,.14);
+  --shadow:0 1px 2px rgba(40,30,10,.04),0 8px 24px rgba(40,30,10,.06); --glow:rgba(180,138,60,.10);
+  --bad:#B4433A; --bad-soft:#FBEAE7; --warn:#946010; --warn-soft:#FBF0DB; --good:#25734F; --good-soft:#E3F2E9;
+  --nav:rgba(255,255,255,.92); color-scheme:light;
+}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.55;direction:rtl}
 .wrap{max-width:980px;margin:0 auto;padding-inline:16px;padding-block:20px 60px}
@@ -382,6 +380,70 @@ header h1{font-size:1.15rem;color:var(--muted);font-weight:600}
 @media (max-width:640px){.cal .ev{display:none}.cal .more-ev{display:none}.cal .cnt{display:inline-block;margin-top:auto;align-self:flex-start;font:700 .7rem var(--f-body);background:var(--accent-soft);color:var(--accent);border-radius:99px;padding:1px 6px}.cal .cnt.bad{background:var(--bad-soft);color:var(--bad)}.cal .c .n span.num{display:none}}
 .dayl{margin-top:12px}
 </style>
+<style>
+body{background:radial-gradient(1100px 520px at 88% -8%,var(--glow),transparent 62%),radial-gradient(900px 480px at 0% 110%,var(--glow),transparent 60%),var(--bg);background-attachment:fixed;font-size:15.5px}
+h1,h2,h3,.group-h,.kc .v,.v,.amt,.num,.unit,.tile b,.bc b,.hello h2{font-family:var(--f-display)}
+.kc,.panel,.bc,.row,.tbl-wrap,.bmap,.camp,.req,.kgrid .k1,.cal .c:not(.o),.cmini div,.bars,dialog,.rc{background:var(--surface);border:1px solid var(--line)!important;box-shadow:var(--shadow);border-radius:var(--r)}
+.empty{background:transparent;border:1px dashed var(--line)}
+.hello h2{font-size:1.75rem;font-weight:800;background:linear-gradient(90deg,var(--ink) 30%,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+.kp{gap:14px}
+.kc{padding:18px;position:relative;overflow:hidden}
+.kc .v{font-size:1.9rem;font-weight:800;letter-spacing:-.01em}
+.kp .kc:first-child{background:var(--gold-grad);border:0!important;color:#17120A}
+.kp .kc:first-child .l,.kp .kc:first-child .s{color:rgba(23,18,10,.72)}
+.kp .kc:first-child .v{color:#17120A}
+.kp .kc:first-child::after{content:"";position:absolute;inset:auto -40px -60px auto;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.18)}
+.pbar{background:var(--sunk)}.pbar i{background:var(--gold-grad)}
+button.btn,a.btn,label.btn{border-radius:12px;background:transparent;border:1px solid var(--line);color:var(--ink);font-weight:700}
+button.btn:hover,a.btn:hover{border-color:var(--gold)}
+button.btn.primary,a.btn.primary,.mini.p{background:var(--gold-grad);border:0;color:#17120A}
+button.btn.danger{color:var(--bad);border-color:color-mix(in srgb,var(--bad) 50%,transparent)}
+.mini{background:transparent;border-color:var(--line);color:var(--ink);border-radius:10px}
+.mini:hover{border-color:var(--gold);color:var(--gold)}
+.chip{background:transparent;border-color:var(--line);color:var(--muted);font-weight:700}
+.chip[aria-pressed="true"]{background:var(--gold-soft);color:var(--gold);border-color:var(--gold)}
+.seg{background:transparent;border-color:var(--line)}.seg button[aria-pressed="true"]{background:var(--gold-soft);color:var(--gold)}
+input,select,textarea{background:var(--sunk);border-color:var(--line);border-radius:12px}
+input:focus,select:focus,textarea:focus{outline:2px solid color-mix(in srgb,var(--gold) 60%,transparent);outline-offset:1px}
+.pill{font-weight:700}
+.pill.prom{background:var(--gold-soft);color:var(--gold)}
+.row .mark{border-radius:6px}
+.row.prom .mark{background:var(--gold)}
+.li{border-color:var(--line)}
+.panel h3{font-size:1.05rem}
+.group-h{font-weight:700}
+.syncpill,.whopill{background:transparent;border-color:var(--line)}
+.toast{background:var(--gold-grad);color:#17120A;font-weight:700}
+dialog{border-radius:22px}
+dialog::backdrop{background:rgba(4,6,9,.6);backdrop-filter:blur(3px)}
+.dlg .foot{background:var(--surface)}
+.bc .dots i{border-radius:4px}
+.cal .c.sel{outline:2px solid var(--gold)}
+.cal .c.td{outline:2px solid color-mix(in srgb,var(--gold) 55%,transparent)}
+.cal .ev{background:var(--gold-soft);color:var(--gold)}
+.tile{background:var(--surface);border-color:var(--line)}
+.t-prom,.lg-prom{--lc:var(--gold);--lb:var(--gold-soft)}
+.bars .col i.c,.legend .c::before{background:var(--gold)}
+.tabs .brand i{background:var(--gold-grad);color:#17120A;font-family:var(--f-display);font-weight:800}
+th{background:var(--sunk)}
+::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:var(--line);border-radius:10px}::-webkit-scrollbar-track{background:transparent}
+@media (min-width:1024px){
+  .tabs{background:var(--side);border-left:1px solid rgba(255,255,255,.04)}
+  .tab{color:var(--side-ink)}
+  .tab[aria-selected="true"]{background:var(--side-act);color:#E2C27E;box-shadow:inset -3px 0 0 #D4AF6A}
+  .tabs .brand{border-bottom-color:rgba(255,255,255,.06)}
+}
+@media (max-width:1023px){
+  .tabs{background:var(--nav);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--line)}
+  .tab[aria-selected="true"]{color:var(--gold);border-top-color:var(--gold)}
+}
+@media (min-width:641px) and (max-width:1023px){
+  .tabs{position:sticky;top:0;z-index:20;border-radius:0 0 16px 16px;margin:0 -16px 12px;padding:4px 8px}
+  .tab .ti{display:inline-block;width:18px;height:18px;vertical-align:-4px;margin-left:6px}
+}
+.more{background:var(--surface)!important;border-color:var(--line)!important}
+@media (max-width:640px){header h1{display:none}header{margin-bottom:8px}}
+</style>
 </head><body>
 
 <div class="wrap">
@@ -389,7 +451,7 @@ header h1{font-size:1.15rem;color:var(--muted);font-weight:600}
     <div>
       <h1>دفتر إيجارات جمجوم</h1>
       <p class="sub">فلل الحمدانية · عمارة المروة · عمارة الرحيلي · عمارة طيبة · الشقق المتفرقة — <span id="today" class="num"></span></p>
-      <button type="button" class="syncpill" id="syncState" data-s="off">غير مربوط بـ Google Sheets</button><button type="button" class="whopill" id="whoBtn">المستخدم: —</button><button type="button" class="whopill" id="themeBtn">المظهر: تلقائي</button>
+      <button type="button" class="syncpill" id="syncState" data-s="off">غير مربوط بـ Google Sheets</button><button type="button" class="whopill" id="whoBtn">المستخدم: —</button><button type="button" class="whopill" id="themeBtn">المظهر: داكن</button>
     </div>
     <div class="hdr-act">
       <button class="btn more-t" id="moreBtn" type="button" aria-expanded="false" aria-controls="moreBox">أدوات ▾</button>
@@ -578,11 +640,11 @@ header h1{font-size:1.15rem;color:var(--muted);font-weight:600}
 (function(){
 const OWNER_NAME='فراس فريد مصطفى جمجوم', IBAN='', MY_PHONE='0549943999';
 const FERAS_PHONE='0556618872', PUBKEY='yYXwr7qZUNor8dThFq', EXEC_URL='https://script.google.com/macros/s/AKfycbyCt55jZ9VyOyv36VhFGRjQseN9qpK1c1A4pld_QKHoG86ndH6fcVv6Tb-nVuZH5fyE/exec';
-const THK='jamjoom-theme',THN={auto:'تلقائي',light:'فاتح',dark:'داكن'};
-function applyTheme(t){if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;else delete document.documentElement.dataset.theme;const b=document.getElementById('themeBtn');if(b)b.textContent='المظهر: '+THN[t in THN?t:'auto']}
+const THK='jamjoom-theme2',THN={light:'فاتح',dark:'داكن'};
+function applyTheme(t){t=t==='light'?'light':'dark';document.documentElement.dataset.theme=t;const b=document.getElementById('themeBtn');if(b)b.textContent='المظهر: '+THN[t]}
 let theme='auto';try{theme=localStorage.getItem(THK)||'auto'}catch(_){}
 applyTheme(theme);
-document.getElementById('themeBtn').addEventListener('click',()=>{theme={auto:'light',light:'dark',dark:'auto'}[theme]||'auto';try{localStorage.setItem(THK,theme)}catch(_){}applyTheme(theme)});
+document.getElementById('themeBtn').addEventListener('click',()=>{theme=theme==='light'?'dark':'light';try{localStorage.setItem(THK,theme)}catch(_){}applyTheme(theme)});
 const PAYTXT='\n\nالسداد عن طريق منصة إيجار فقط (تطبيق إيجار أو موقع ejar.sa ← دفعات العقود). ما نقبل السداد نقداً ولا بالتحويل.';
 const state={units:[],pays:[],exps:[],hist:[],reqs:[],tab:'due',prop:'all',q:'',db:null,canWrite:true,loaded:{u:false,p:false},rpMonth:''};
 const DEFAULT_WHO='', WKEY='jamjoom-who';
