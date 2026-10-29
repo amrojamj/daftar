@@ -599,6 +599,56 @@ dialog::backdrop{background:rgba(0,0,0,.4)}
 }
 
 </style>
+<style>
+#moreBtn,#moreBox{display:none!important}
+.subnav{display:flex;gap:8px;overflow-x:auto;margin:0 0 14px;padding:2px 0;scrollbar-width:none}
+.subnav::-webkit-scrollbar{display:none}
+.sb{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--bg);color:var(--muted);border-radius:999px;padding:8px 18px;font:700 .9rem var(--f-body);cursor:pointer;transition:background .2s,color .2s}
+.sb:hover{color:var(--ink)}
+.sb[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.sb .bd{min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--bad);color:#fff;font-size:.7rem;display:inline-grid;place-items:center}
+.alertc{display:flex;align-items:center;gap:12px;width:100%;text-align:right;background:var(--bad-soft);color:var(--bad);border:0;border-radius:18px;padding:14px 16px;margin:0 0 12px;cursor:pointer;font:inherit}
+.alertc .ad{width:10px;height:10px;border-radius:50%;background:var(--bad);flex:0 0 auto;box-shadow:0 0 0 5px color-mix(in srgb,var(--bad) 18%,transparent)}
+.alertc .at{flex:1;min-width:0;display:flex;flex-direction:column}
+.alertc .at b{font-weight:800}
+.alertc .at small{color:var(--ink);opacity:.7;font-size:.8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.alertc .ma,.mi .ma{font-size:1.4rem;line-height:1;opacity:.6}
+.bsum{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px}
+.bsum div{background:var(--surface);border-radius:16px;padding:12px 14px;display:flex;flex-direction:column}
+.bsum b{font-size:1.35rem;font-weight:800}.bsum span{color:var(--muted);font-size:.8rem}
+.bgrid2{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.bk{background:var(--surface);border-radius:20px;padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.bk-h{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.bk-h h3{margin:0;font-size:1.1rem;font-weight:800}.bk-h .muted{font-size:.8rem}
+.bk-s{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
+.bk-s div{background:var(--bg);border-radius:12px;padding:8px;text-align:center;display:flex;flex-direction:column}
+.bk-s b{font-size:1.15rem;font-weight:800}.bk-s b.bad{color:var(--bad)}.bk-s span{font-size:.72rem;color:var(--muted)}
+.bk-m{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:.85rem;color:var(--muted)}
+.bk-m b{color:var(--ink);font-weight:800;margin-inline-start:4px}
+.bk .occ{width:100%;margin:0}
+.bk-i{border-top:1px solid var(--line);padding-top:8px;display:flex;flex-direction:column;gap:4px}
+.bk-i div{display:grid;grid-template-columns:90px minmax(0,1fr);gap:8px;font-size:.84rem}
+.bk-i span{color:var(--muted)}.bk-i b{font-weight:600;overflow-wrap:anywhere}
+.bk-a{display:flex;gap:6px;flex-wrap:wrap;margin-top:auto}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px;align-items:start}
+.ms h3{font-size:.85rem;color:var(--muted);font-weight:700;margin:0 6px 8px}
+.mc{background:var(--surface);border-radius:18px;overflow:hidden}
+.mi{display:flex;align-items:center;gap:10px;width:100%;padding:14px 16px;background:none;border:0;border-bottom:1px solid var(--line);text-align:right;color:var(--ink);font:inherit;cursor:pointer;text-decoration:none}
+.mi:last-child{border-bottom:0}
+.mi:hover{background:var(--sunk)}
+.mi .mt{flex:1;min-width:0;display:flex;flex-direction:column}
+.mi .mt b{font-weight:700}.mi .mt small{color:var(--muted);font-size:.8rem}
+@media (max-width:640px){
+  .tabs{grid-template-columns:repeat(5,minmax(0,1fr))!important}
+  .tab{font-size:.66rem!important}
+  .bsum{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .bgrid2,.mgrid{grid-template-columns:1fr}
+  .subnav{margin-inline:-16px;padding-inline:16px}
+  .sb{padding:7px 15px;font-size:.85rem}
+}
+@media (min-width:641px) and (max-width:1023px){.tabs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr))}}
+
+</style>
 </head><body>
 
 <div class="wrap">
@@ -640,15 +690,14 @@ dialog::backdrop{background:rgba(0,0,0,.4)}
 
   <div class="tabs" role="tablist">
     <div class="brand"><i>د</i><span>دفتر جمجوم<small>إدارة الإيجارات</small></span></div>
-    <button class="tab" role="tab" data-tab="home" aria-selected="false" id="tab-home"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 11 12 4l8.5 7"/><path d="M5.5 9.5V20h13V9.5"/><path d="M10 20v-5h4v5"/></svg><span>الرئيسية</span></button>
-    <button class="tab" role="tab" data-tab="due" aria-selected="true" id="tab-due"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9a6 6 0 1 1 12 0c0 6 2.5 8 2.5 8h-17S6 15 6 9"/><path d="M10 20.5h4"/></svg><span>المتابعة</span></button>
-    <button class="tab" role="tab" data-tab="units" aria-selected="false" id="tab-units"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="3" width="15" height="18" rx="1.5"/><path d="M9 7.5h1.5M13.5 7.5H15M9 11.5h1.5M13.5 11.5H15M10 21v-4h4v4"/></svg><span>الوحدات</span></button>
-    <button class="tab" role="tab" data-tab="contracts" aria-selected="false" id="tab-contracts"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6.5A1.5 1.5 0 0 0 5 4.5v15A1.5 1.5 0 0 0 6.5 21h11a1.5 1.5 0 0 0 1.5-1.5V8z"/><path d="M14 3v5h5M8.5 13h7M8.5 16.5h5"/></svg><span>العقود<span class="tx"> والتجديد</span></span></button>
-    <button class="tab" role="tab" data-tab="pays" aria-selected="false" id="tab-pays"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 10v4M18 10v4"/></svg><span>الدفعات</span></button>
-    <button class="tab" role="tab" data-tab="expenses" aria-selected="false" id="tab-expenses"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 3h13v18l-2.6-1.6L13.3 21l-2.6-1.6L8.1 21l-2.6-1.6z"/><path d="M9 8h6M9 12h6"/></svg><span>المصاريف</span></button>
-    <button class="tab" role="tab" data-tab="reports" aria-selected="false" id="tab-reports"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20.5h18M6.5 17v-6M11.5 17V6M16.5 17v-4"/></svg><span>التقارير</span></button>
+    <button class="tab" role="tab" data-tab="home" aria-selected="true" id="tab-home"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 11 12 4l8.5 7"/><path d="M5.5 9.5V20h13V9.5"/><path d="M10 20v-5h4v5"/></svg><span>الرئيسية</span></button>
+    <button class="tab" role="tab" data-tab="due" aria-selected="false" id="tab-due"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9a6 6 0 1 1 12 0c0 6 2.5 8 2.5 8h-17S6 15 6 9"/><path d="M10 20.5h4"/></svg><span>المتابعة</span></button>
+    <button class="tab" role="tab" data-tab="estate" aria-selected="false" id="tab-estate"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4.5" y="3" width="15" height="18" rx="1.5"/><path d="M9 7.5h1.5M13.5 7.5H15M9 11.5h1.5M13.5 11.5H15M10 21v-4h4v4"/></svg><span>العقارات</span></button>
+    <button class="tab" role="tab" data-tab="money" aria-selected="false" id="tab-money"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="6" width="19" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 10v4M18 10v4"/></svg><span>المالية</span></button>
+    <button class="tab" role="tab" data-tab="more" aria-selected="false" id="tab-more"><svg class="ti" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5.5" cy="12" r="1.3" fill="currentColor"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/><circle cx="18.5" cy="12" r="1.3" fill="currentColor"/></svg><span>المزيد</span></button>
   </div>
 
+  <div class="subnav" id="subnav" role="tablist" hidden></div>
   <div class="tools filters">
     <div class="chips">
     <button class="chip" data-prop="all" aria-pressed="true">الكل</button>
@@ -661,6 +710,20 @@ dialog::backdrop{background:rgba(0,0,0,.4)}
 
   <main id="view"><div class="empty">جاري تحميل البيانات…</div></main>
 </div>
+
+<dialog id="bdDlg"><form class="dlg" id="bdForm" method="dialog">
+  <h2>معلومات العمارة</h2>
+  <p class="hint" id="bdName" style="margin:-6px 0 0;font-weight:700;color:var(--ink)"></p>
+  <div class="grid2">
+    <label class="f">الحي<input id="bdDist" maxlength="60" placeholder="مثلاً: الحمدانية"></label>
+    <label class="f">عدد الأدوار<input id="bdFloors" inputmode="numeric" maxlength="3"></label>
+    <label class="f">رقم الصك<input id="bdDeed" maxlength="40"></label>
+    <label class="f">المالك في الصك<input id="bdOwner" maxlength="80"></label>
+  </div>
+  <label class="f">رابط الموقع (قوقل ماب)<input id="bdMap" dir="ltr" maxlength="400" placeholder="https://maps.app.goo.gl/…"></label>
+  <label class="f">ملاحظات (عداد كهرباء، مصعد، حارس…)<textarea id="bdNotes" rows="3" maxlength="800"></textarea></label>
+  <div class="foot"><button class="btn" type="button" data-close>إلغاء</button><button class="btn primary" type="submit">حفظ</button></div>
+</form></dialog>
 
 <dialog id="payDlg"><form class="dlg" id="payForm" method="dialog">
   <h2 id="payTitle">تسجيل دفعة</h2>
@@ -803,7 +866,7 @@ let theme='auto';try{theme=localStorage.getItem(THK)||'auto'}catch(_){}
 applyTheme(theme);
 document.getElementById('themeBtn').addEventListener('click',()=>{theme=theme==='dark'?'light':'dark';try{localStorage.setItem(THK,theme)}catch(_){}applyTheme(theme)});
 const PAYTXT='\n\nالسداد عن طريق منصة إيجار فقط (تطبيق إيجار أو موقع ejar.sa ← دفعات العقود). ما نقبل السداد نقداً ولا بالتحويل.';
-const state={units:[],pays:[],exps:[],hist:[],reqs:[],tab:'due',prop:'all',q:'',db:null,canWrite:true,loaded:{u:false,p:false},rpMonth:''};
+const state={units:[],pays:[],exps:[],hist:[],reqs:[],bldgs:[],tab:'due',prop:'all',q:'',db:null,canWrite:true,loaded:{u:false,p:false},rpMonth:''};
 const DEFAULT_WHO='', WKEY='jamjoom-who';
 const PROP_T={'الحمدانية':'فلل الحمدانية','المروة':'عمارة المروة','متفرقة':'الشقق المتفرقة'};
 const MONTHS=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
@@ -885,7 +948,7 @@ function renderUnits(){
   const U=filtered(); if(!U.length)return emptyMsg();
   const groups=Object.keys(PROP_T).map(p=>[p,U.filter(u=>u.prop===p)]).filter(g=>g[1].length);
   const title={'الحمدانية':'فلل الحمدانية','المروة':'عمارة المروة','متفرقة':'الشقق المتفرقة'};
-  const tb=`<div class="tools"><div class="seg" role="group" aria-label="طريقة العرض"><button type="button" data-uview="list" aria-pressed="${state.uview!=='map'}">قائمة</button><button type="button" data-uview="map" aria-pressed="${state.uview==='map'}">خريطة العمائر</button></div>${state.canWrite?`<button class="btn" type="button" id="addUnit">+ وحدة جديدة</button>`:''}</div>`;
+  const tb=`<div class="tools">${state.canWrite?`<button class="btn" type="button" id="addUnit">+ وحدة جديدة</button>`:''}</div>`;
   if(state.uview==='map')return tb+renderMap(U);
   return tb+groups.map(([p,arr])=>`
     <div class="group-h"><span>${title[p]||PROP_T[p]||p}</span><span class="num">${arr.length} · ${fmt(arr.reduce((a,u)=>a+(+u.rent||0),0))} ريال/سنة</span></div>
@@ -937,17 +1000,66 @@ function syncProps(){
   Object.keys(PROP_T).forEach(p=>{if(!bar.querySelector('.chip[data-prop="'+p+'"]')){const b=document.createElement('button');b.className='chip';b.dataset.prop=p;b.setAttribute('aria-pressed','false');b.textContent=p;bar.appendChild(b)}});
   const sel=$('#uProp');Object.keys(PROP_T).forEach(p=>{if(![...sel.options].some(o=>o.value===p)){const o=document.createElement('option');o.value=p;o.textContent=p;sel.appendChild(o)}});
 }
+const GRP={home:['home'],due:['due'],estate:['units','map','bldgs','contracts','reqs'],money:['pays','expenses','reports'],more:['more']};
+const SUBT={units:'الوحدات',map:'الخريطة',bldgs:'العمائر',contracts:'العقود',reqs:'الصيانة',pays:'الدفعات',expenses:'المصاريف',reports:'التقارير'};
+const GT={home:'',due:'المتابعة',estate:'العقارات',money:'المالية',more:'المزيد'};
+const grpOf=t=>Object.keys(GRP).find(g=>GRP[g].includes(t))||'home';
+state.ls={};
+function subFor(g){const l=state.ls[g];return l&&GRP[g].includes(l)?l:GRP[g][0]}
+function renderSub(){const g=grpOf(state.tab),el=$('#subnav');if(GRP[g].length<2){el.hidden=true;el.innerHTML='';return}
+  const rq=state.reqs.filter(r=>r.status!=='منتهي').length, cn=state.units.filter(u=>!vacant(u)&&!fam(u)&&cstat(u).g==='need').length;
+  const bd={reqs:rq,contracts:cn};
+  el.hidden=false;el.innerHTML=GRP[g].map(k=>`<button type="button" class="sb" role="tab" data-sub="${k}" aria-pressed="${k===state.tab}">${SUBT[k]}${bd[k]?`<span class="bd">${bd[k]}</span>`:''}</button>`).join('')}
+function bInfo(name){return state.bldgs.find(b=>b.name===name)||null}
+function renderBldgs(){
+  if(!state.loaded.u)return emptyMsg();
+  const t=today(),ys=String(t.getFullYear()),G={};
+  state.units.forEach(u=>{const k=bName(u);(G[k]=G[k]||{p:u.prop,us:[]}).us.push(u)});
+  const uB={};state.units.forEach(u=>uB[u.id]=bName(u));
+  const col={};state.pays.filter(p=>(p.date||'').startsWith(ys)).forEach(p=>{const k=uB[p.unitId];if(k)col[k]=(col[k]||0)+(+p.amount||0)});
+  const rows=Object.entries(G).sort((a,b)=>b[1].us.length-a[1].us.length);
+  const tot=rows.reduce((a,[k,g])=>{const r=g.us.filter(u=>!vacant(u)&&!fam(u));a.n+=g.us.length;a.r+=r.length;a.rent+=r.reduce((x,u)=>x+(+u.rent||0),0);return a},{n:0,r:0,rent:0});
+  const kv=(k,v)=>v?`<div><span>${k}</span><b>${v}</b></div>`:'';
+  return `<div class="bsum"><div><b class="num">${rows.length}</b><span>عمارة</span></div><div><b class="num">${tot.n}</b><span>وحدة</span></div><div><b class="num">${tot.r}</b><span>مؤجرة</span></div><div><b class="num">${fmt(tot.rent)}</b><span>إيجار سنوي</span></div></div>
+  <div class="bgrid2">${rows.map(([k,g])=>{const us=g.us, vac=us.filter(vacant).length, fm=us.filter(fam).length, R=us.filter(u=>!vacant(u)&&!fam(u)), rent=R.reduce((a,u)=>a+(+u.rent||0),0), lt=R.filter(u=>(days(u.due)??0)<0&&!promised(u)).length, occ=us.length?Math.round((us.length-vac)/us.length*100):0, bi=bInfo(k)||{};
+    return `<article class="bk"><div class="bk-h"><div><h3>${esc(k)}</h3><span class="muted">${esc([bi.district,bi.floors?bi.floors+' أدوار':''].filter(Boolean).join(' · ')||(g.p==='متفرقة'?'شقق متفرقة':g.p))}</span></div>${state.canWrite?`<button class="mini" type="button" data-bedit="${esc(k)}" data-bprop="${esc(g.p)}">تعديل</button>`:''}</div>
+      <div class="bk-s"><div><b class="num">${us.length}</b><span>وحدة</span></div><div><b class="num">${us.length-vac-fm}</b><span>مؤجرة</span></div><div><b class="num">${vac}</b><span>شاغرة</span></div><div><b class="num ${lt?'bad':''}">${lt}</b><span>متأخر</span></div></div>
+      <div class="bk-m"><span>الإيجار السنوي <b class="num">${fmt(rent)}</b></span><span>محصّل ${ys} <b class="num">${fmt(col[k]||0)}</b></span></div>
+      <div class="occ"><i style="width:${occ}%"></i></div><div class="muted" style="font-size:.78rem;margin-top:4px">إشغال ${occ}%${fm?' · '+fm+' سكن عائلي':''}</div>
+      ${bi.deed||bi.owner||bi.notes?`<div class="bk-i">${kv('رقم الصك',esc(bi.deed||''))}${kv('المالك',esc(bi.owner||''))}${kv('ملاحظات',esc(bi.notes||''))}</div>`:''}
+      <div class="bk-a"><button class="mini" type="button" data-go="map" data-prop="${esc(g.p)}">الوحدات</button>${/^https:/.test(bi.mapUrl||'')?`<a class="mini" href="${esc(bi.mapUrl)}" target="_blank" rel="noopener">الموقع</a>`:''}</div></article>`}).join('')}</div>
+  <p class="hint">«تعديل» تضيف فيها معلومات العمارة (الحي، رقم الصك، المالك، رابط الموقع). تنحفظ في شيت قوقل في تبويب «العمائر».</p>`;
+}
+function renderMore(){
+  const has=id=>{const e=$('#'+id);return e&&(id==='restoreFile'||!e.hidden)};
+  const val=id=>{const t=($('#'+id)||{}).textContent||'';return t.includes(':')?t.split(':').slice(1).join(':').trim():''};
+  const it=(id,t,sub)=>has(id)?`<button type="button" class="mi" data-proxy="${id}"><span class="mt"><b>${t}</b>${sub?`<small>${esc(sub)}</small>`:''}</span><span class="ma" aria-hidden="true">‹</span></button>`:'';
+  const sec=(h,x)=>x?`<section class="ms"><h3>${h}</h3><div class="mc">${x}</div></section>`:'';
+  const SH='https:'+'/'+'/docs.google.com/spreadsheets/d/12u_Ohsfygn6UC66vXTLwjq8BkT4oKNEwwYaQT8stsE0/edit';
+  return `<div class="mgrid">`+sec('التواصل',it('bcOpen','رسالة لكل المستأجرين','تذكير جماعي بقرب موعد الإيجار')+it('wkOpen','ملخص الأسبوع لفراس','كل اللي صار هذا الأسبوع في رسالة وحدة')+it('rqLink','رابط طلبات الصيانة','ترسله للمستأجرين يرفعون منه طلب'))
+   +sec('البيانات',`<a class="mi" href="${SH}" target="_blank" rel="noopener"><span class="mt"><b>فتح شيت قوقل</b><small>كل البيانات والتقارير في جداول</small></span><span class="ma" aria-hidden="true">‹</span></a>`+it('exportCsv','تصدير Excel','')+it('backup','نسخة احتياطية','ينزل ملف فيه كل البيانات')+it('restoreFile','استرجاع من نسخة','')+it('syncBtn','ربط Google Sheets',''))
+   +sec('الإعدادات',it('whoBtn','المستخدم',val('whoBtn'))+it('themeBtn','المظهر',val('themeBtn'))+it('waMode','الواتساب',val('waMode')))
+   +`</div><p class="hint" style="text-align:center">${esc(($('#syncState')||{}).textContent||'')}</p>`;
+}
+function openBldg(name,prop){const b=bInfo(name)||{};$('#bdName').textContent=name;$('#bdForm').dataset.name=name;$('#bdForm').dataset.prop=prop||'';
+  $('#bdDist').value=b.district||'';$('#bdFloors').value=b.floors||'';$('#bdDeed').value=b.deed||'';$('#bdOwner').value=b.owner||'';$('#bdMap').value=b.mapUrl||'';$('#bdNotes').value=b.notes||'';$('#bdDlg').showModal()}
+$('#bdForm').addEventListener('submit',async e=>{e.preventDefault();if(!state.db)return;const f=$('#bdForm'),name=f.dataset.name,ex=bInfo(name);
+  const mu=$('#bdMap').value.trim();if(mu&&!/^https:/.test(mu)){toast('رابط الموقع لازم يبدأ بـ https');return}
+  const body={district:$('#bdDist').value.trim(),floors:$('#bdFloors').value.trim(),deed:$('#bdDeed').value.trim(),owner:$('#bdOwner').value.trim(),mapUrl:mu,notes:$('#bdNotes').value.trim(),updatedAt:new Date().toISOString()};
+  try{if(ex)await state.db.doc('buildings/'+ex.id).update(body);else await state.db.collection('buildings').add({name,prop:f.dataset.prop,...body});$('#bdDlg').close();toast('انحفظت معلومات العمارة')}catch(_){toast('ما انحفظت، جرّب مرة ثانية')}});
+$('#bdDlg').addEventListener('click',e=>{if(e.target.closest('[data-close]'))$('#bdDlg').close()});
+$('#subnav').addEventListener('click',e=>{const b=e.target.closest('[data-sub]');if(b)goTab(b.dataset.sub)});
 function render(){
   syncProps();
   summary();
-  document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected',String(t.dataset.tab===state.tab)));
+  if(!GRP[grpOf(state.tab)].includes(state.tab))state.tab='home';const G0=grpOf(state.tab);state.ls[G0]=state.tab;document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected',String(t.dataset.tab===G0)));renderSub();
   document.querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',String(c.dataset.prop===state.prop)));
-  $('#view').innerHTML=state.tab==='home'?renderHome():state.tab==='due'?(state.dview==='cal'?renderCal():renderDue()):state.tab==='units'?renderUnits():state.tab==='contracts'?renderContracts():state.tab==='expenses'?renderExpenses():state.tab==='reports'?renderReports():renderPays();
-  document.querySelector('.filters').hidden=state.tab==='home';
-  $('#pageTitle').textContent={home:greet()+(who()?' يا '+who():''),due:'المتابعة',units:'الوحدات',contracts:'العقود والتجديد',pays:'الدفعات',expenses:'المصاريف',reports:'التقارير'}[state.tab]||'';
+  $('#view').innerHTML=state.tab==='home'?renderHome():state.tab==='due'?(state.dview==='cal'?renderCal():renderDue()):state.tab==='units'||state.tab==='map'?(state.uview=state.tab==='map'?'map':'list',renderUnits()):state.tab==='bldgs'?renderBldgs():state.tab==='reqs'?(renderReqs()||'<div class="empty">طلبات الصيانة تشتغل بعد ما يتزامن التطبيق مع الشيت.</div>'):state.tab==='more'?renderMore():state.tab==='contracts'?renderContracts():state.tab==='expenses'?renderExpenses():state.tab==='reports'?renderReports():renderPays();
+  document.querySelector('.filters').hidden=['home','more','bldgs'].includes(state.tab);
+  $('#pageTitle').textContent=G0==='home'?greet()+(who()?' يا '+who():''):GT[G0];
   if(state._lt!==state.tab){state._lt=state.tab;const v=$('#view');v.classList.remove('enter');void v.offsetWidth;v.classList.add('enter');if(state.tab==='home')requestAnimationFrame(countUp)}
   $('#whoBtn').textContent='المستخدم: '+(who()||'—');
-  $('#addPayTop').hidden=!state.canWrite||state.tab==='home';
+  $('#addPayTop').hidden=!state.canWrite||['home','more'].includes(state.tab);
 }
 
 /* ---------- payment dialog ---------- */
@@ -1016,7 +1128,7 @@ $('#uDeleteSure').addEventListener('click',async()=>{if(!editing||!state.db)retu
 document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>b.closest('dialog').close()));
 
 /* ---------- events ---------- */
-document.querySelector('.tabs').addEventListener('click',e=>{const t=e.target.closest('.tab');if(!t)return;state.tab=t.dataset.tab;try{localStorage.setItem('tab2',state.tab)}catch(_){}render();if(matchMedia('(max-width:640px)').matches){const f=document.querySelector('.filters');const y=f.getBoundingClientRect().top+scrollY-8;if(scrollY>y)scrollTo({top:y})}});
+document.querySelector('.tabs').addEventListener('click',e=>{const t=e.target.closest('.tab');if(!t)return;state.tab=subFor(t.dataset.tab);try{localStorage.setItem('tab2',state.tab)}catch(_){}render();if(matchMedia('(max-width:640px)').matches){const f=document.querySelector('.filters');const y=f.getBoundingClientRect().top+scrollY-8;if(scrollY>y)scrollTo({top:y})}});
 function labelTables(){document.querySelectorAll('.tbl-wrap table').forEach(t=>{const hs=[...t.querySelectorAll('thead th')].map(th=>th.textContent.trim());t.querySelectorAll('tbody tr').forEach(tr=>{let i=0;[...tr.children].forEach(td=>{if(!td.hasAttribute('data-label'))td.setAttribute('data-label',hs[i]||'');i+=td.colSpan||1})})})}
 new MutationObserver(labelTables).observe($('#view'),{childList:true,subtree:true});labelTables();
 $('#moreBtn').addEventListener('click',()=>{const o=$('#moreBox').classList.toggle('open');$('#moreBtn').setAttribute('aria-expanded',String(o))});
@@ -1234,7 +1346,7 @@ function renderExpenses(){
   const mon=E.filter(x=>(x.date||'').startsWith(ym)), yr=E.filter(x=>(x.date||'').startsWith(y));
   const cats={};yr.forEach(x=>{const c=x.category||'أخرى';cats[c]=(cats[c]||0)+(+x.amount||0)});
   const top=Object.entries(cats).sort((a,b)=>b[1]-a[1])[0];
-  let h=renderReqs()+`<div class="tools">${state.canWrite?'<button class="btn primary" type="button" data-addexp="1">+ مصروف جديد</button>':''}</div>
+  let h=`<div class="tools">${state.canWrite?'<button class="btn primary" type="button" data-addexp="1">+ مصروف جديد</button>':''}</div>
   <div class="kgrid"><div class="k1 bad"><div class="k">مصاريف هذا الشهر</div><div class="v">${fmt(sum(mon))}</div><div class="s">${mon.length} مصروف</div></div>
   <div class="k1 bad"><div class="k">مصاريف هذه السنة</div><div class="v">${fmt(sum(yr))}</div><div class="s">${yr.length} مصروف</div></div>
   <div class="k1"><div class="k">أكبر بند هذه السنة</div><div class="v" style="font-size:1.05rem">${top?esc(top[0]):'—'}</div><div class="s">${top?fmt(top[1])+' ريال':''}</div></div>
@@ -1549,6 +1661,7 @@ function renderHome(){
   const qb=(k,ic,tx)=>`<button type="button" class="qb" data-qa="${k}"><i>${ic}</i><span>${tx}</span></button>`;
   const IC={pay:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',bc:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 1 1 12 0c0 6 2.5 8 2.5 8h-17S6 15 6 9"/><path d="M10 20.5h4"/></svg>',exp:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg>',wk:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M5 7h14M5 12h14M5 17h9"/></svg>'};
   return `<div class="hello"><div class="d">${dt}</div></div>
+  ${late.length?`<button type="button" class="alertc" data-go="due"><span class="ad"></span><span class="at"><b>${late.length} ${late.length>1?'متأخرين':'متأخر'} · <span class="num">${fmt(lateAmt)}</span> ريال</b><small>${late.slice(0,3).map(u=>esc(label(u))).join('، ')}${late.length>3?'…':''}</small></span><span class="ma">‹</span></button>`:''}
   <div class="hx">
     <div class="hero" data-go="reports"><div class="hl"><span>تحصيل ${MONTHS[m]}</span><span class="hp">${rate}%</span></div><div class="hv"><span class="v num">${fmt(M.col)}</span><small>ريال</small></div><div class="hbar"><i style="width:${rate}%"></i></div><div class="hr"><span>المتوقع ${fmt(M.exp)}</span><span>الباقي ${fmt(Math.max(0,M.exp-M.col))}</span></div></div>
     <div class="qa2">${state.canWrite?qb('pay',IC.pay,'دفعة'):''}${qb('bc',IC.bc,'تذكير')}${state.canWrite?qb('exp',IC.exp,'مصروف'):''}${qb('wk',IC.wk,'ملخص')}</div>
@@ -1557,19 +1670,19 @@ function renderHome(){
     <div class="kc" data-go="units"><div class="l"><span>الإيجار السنوي</span></div><div class="v">${fmt(U.reduce((a,u)=>a+(+u.rent||0),0))}</div><div class="s">${all.length} وحدة · إشغال ${occ}%</div></div>
   </div>
   <div class="hgrid">
-    <div class="panel"><h3>يحل قريب <small>خلال 10 أيام</small></h3>${nxt.length?nxt.slice(0,8).map(u=>li(u,`<span class="amt num">${inst(u)?fmt(inst(u)):'—'}</span><span class="pill warn">${dmy(u.due).slice(0,5)}</span>${wa(u)}`)).join('')+(nxt.length>8?`<div class="li"><span class="muted">و${nxt.length-8} غيرهم</span><button class="mini" type="button" data-go="due">الكل</button></div>`:''):'<p class="muted">ما فيه دفعات خلال 10 أيام.</p>'}</div>
     <div class="panel"><h3>المتأخرين والوعود <small>${late.length+pr.length}</small></h3>${late.concat(pr).length?late.concat(pr).map(u=>li(u,`<span class="amt num">${fmt(overdueCount(u)*(inst(u)||0))}</span>${promised(u)?`<span class="pill prom">وعد ${dmy(u.promise).slice(0,5)}</span>`:broke(u)?'<span class="pill bad">أخلف الوعد</span>':`<span class="pill bad">${-days(u.due)} يوم</span>`}${wa(u)}`)).join(''):'<p class="muted">ما فيه متأخرات، الحمدلله.</p>'}</div>
+    <div class="panel"><h3>يحل قريب <small>خلال 10 أيام</small></h3>${nxt.length?nxt.slice(0,8).map(u=>li(u,`<span class="amt num">${inst(u)?fmt(inst(u)):'—'}</span><span class="pill warn">${dmy(u.due).slice(0,5)}</span>${wa(u)}`)).join('')+(nxt.length>8?`<div class="li"><span class="muted">و${nxt.length-8} غيرهم</span><button class="mini" type="button" data-go="due">الكل</button></div>`:''):'<p class="muted">ما فيه دفعات خلال 10 أيام.</p>'}</div>
     <div class="panel"><h3>آخر الدفعات <small><button class="mini" type="button" data-go="pays">الكل</button></small></h3>${lastP.length?lastP.map(p=>{const u=all.find(z=>z.id===p.unitId);return u?li(u,`<span class="amt num">${fmt(p.amount)}</span><span class="muted">${dmy(p.date).slice(0,5)}</span>`):''}).join(''):'<p class="muted">ما فيه دفعات مسجلة.</p>'}</div>
     <div class="panel"><h3>تحتاج متابعة</h3>
       <div class="li"><div class="t"><b data-go="contracts">التجديد</b><span>${need.length} عقد يحتاج تجديد · ${yes} وافقوا</span></div><div class="r"><button class="mini" type="button" data-go="contracts">فتح</button></div></div>
-      <div class="li"><div class="t"><b data-go="expenses">الصيانة</b><span>${rq.length?rq.length+' طلب مفتوح':'ما فيه طلبات مفتوحة'}</span></div><div class="r"><button class="mini" type="button" data-go="expenses">فتح</button></div></div>
+      <div class="li"><div class="t"><b data-go="reqs">الصيانة</b><span>${rq.length?rq.length+' طلب مفتوح':'ما فيه طلبات مفتوحة'}</span></div><div class="r"><button class="mini" type="button" data-go="reqs">فتح</button></div></div>
       <div class="li"><div class="t"><b>الشواغر</b><span>${all.filter(vacant).length?all.filter(vacant).map(label).join('، '):'كل الوحدات مؤجرة'}</span></div></div>
       <div class="li"><div class="t"><b>بيانات ناقصة</b><span>${U.filter(u=>!u.n).length} بدون عدد دفعات · ${U.filter(u=>!u.phone).length} بدون جوال · ${U.filter(u=>!u.rent).length} بدون إيجار</span></div></div>
     </div>
   </div>
-  <div class="group-h"><span>العمائر</span><span class="muted" style="font-size:.85rem">اضغط على أي عمارة</span></div>
+  <div class="group-h"><span>العمائر</span><button class="mini" type="button" data-go="bldgs">كل العمائر</button></div>
   <div class="bgrid">${Object.entries(G).map(([k,g])=>{const us=g.us, rent=us.filter(u=>!vacant(u)&&!fam(u)).reduce((a,u)=>a+(+u.rent||0),0), lt=us.filter(u=>tileOf(u)==='bad').length;
-    return `<div class="bc" data-go="units" data-prop="${esc(g.p)}"><div class="row3"><b>${esc(k)}</b><span class="s">${us.length} وحدة</span></div><div class="row3"><span class="num" style="font-weight:700">${fmt(rent)}</span><span class="s">${lt?'<span style="color:var(--bad)">'+lt+' متأخر</span>':'منتظم'}</span></div><div class="dots">${us.map(u=>`<i class="${tileOf(u)}" title="${esc(u.unit)}"></i>`).join('')}</div></div>`}).join('')}</div>`;
+    return `<div class="bc" data-go="map" data-prop="${esc(g.p)}"><div class="row3"><b>${esc(k)}</b><span class="s">${us.length} وحدة</span></div><div class="row3"><span class="num" style="font-weight:700">${fmt(rent)}</span><span class="s">${lt?'<span style="color:var(--bad)">'+lt+' متأخر</span>':'منتظم'}</span></div><div class="dots">${us.map(u=>`<i class="${tileOf(u)}" title="${esc(u.unit)}"></i>`).join('')}</div></div>`}).join('')}</div>`;
 }
 let calY=null,calM=null;
 function calMove(d){calDay=null;const t=today();if(calY==null){calY=t.getFullYear();calM=t.getMonth()}calM+=d;while(calM<0){calM+=12;calY--}while(calM>11){calM-=12;calY++}render()}
@@ -1625,6 +1738,8 @@ $('#promClear').addEventListener('click',async()=>{if(!promU||!state.db)return;
   try{await state.db.doc('units/'+promU.id).update({promise:'',promiseNote:''});$('#promDlg').close();toast('انمسح الوعد')}catch(_){toast('ما انمسح')}});
 const pendingDel=new Set();
 $('#view').addEventListener('click',e=>{
+  const px=e.target.closest('[data-proxy]');if(px){$('#'+px.dataset.proxy).click();setTimeout(()=>{if(state.tab==='more')render()},250);return}
+  const be=e.target.closest('[data-bedit]');if(be){openBldg(be.dataset.bedit,be.dataset.bprop);return}
   const p=e.target.closest('[data-prof]');if(p&&!e.target.closest('a,select')){openProf(p.dataset.prof);e.stopImmediatePropagation();return}
   const g=e.target.closest('[data-go]');if(g){goTab(g.dataset.go,g.dataset.prop);return}
   const dv=e.target.closest('[data-dview]');if(dv){state.dview=dv.dataset.dview;render();return}
@@ -1663,15 +1778,15 @@ const KEY='jamjoom-rent-ledger-pwa';
 const SEED={};
 let data=null; try{data=JSON.parse(localStorage.getItem(KEY)||'null')}catch(_){}
 if(!data||!data.units){data={units:JSON.parse(JSON.stringify(SEED)),payments:{}}}
-if(!data.expenses)data.expenses={}; if(!data.history)data.history={}; if(!data.requests)data.requests={};
-const listeners={units:[],payments:[],expenses:[],history:[],requests:[]};
+if(!data.expenses)data.expenses={}; if(!data.history)data.history={}; if(!data.requests)data.requests={}; if(!data.buildings)data.buildings={};
+const listeners={units:[],payments:[],expenses:[],history:[],requests:[],buildings:[]};
 const snap=c=>({docs:Object.entries(data[c]).map(([id,d])=>({id,data:()=>d}))});
 function emit(){for(const c in listeners)listeners[c].forEach(f=>f(snap(c)))}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(data))}catch(_){ $('#notice').hidden=false;$('#notice').textContent='المتصفح ما سمح بالحفظ. خذ نسخة احتياطية قبل ما تقفل الصفحة.'}emit()}
 
 /* ---------- Google Sheets sync ---------- */
 const TOKEN=(()=>{let t='';try{const m=location.hash.match(/k=([A-Za-z0-9]+)/);if(m){t=m[1];localStorage.setItem('jj-k',t)}else t=localStorage.getItem('jj-k')||''}catch(_){}return t})(), URLKEY='jamjoom-sheet-url', QKEY='jamjoom-sheet-queue';
-const NUMS={units:['rent','n','newRent'],payments:['amount'],expenses:['amount'],history:['rent','n'],requests:['cost']};
+const NUMS={units:['rent','n','newRent'],payments:['amount'],expenses:['amount'],history:['rent','n'],requests:['cost'],buildings:[]};
 const ls={get(k){try{return localStorage.getItem(k)}catch(_){return null}},set(k,v){try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(_){}}};
 const DEFAULT_URL='https://script.google.com/macros/s/AKfycbyCt55jZ9VyOyv36VhFGRjQseN9qpK1c1A4pld_QKHoG86ndH6fcVv6Tb-nVuZH5fyE/exec';
 let sheetUrl=TOKEN?DEFAULT_URL:'';
@@ -1679,7 +1794,7 @@ let queue=[];try{queue=JSON.parse(ls.get(QKEY)||'[]')}catch(_){queue=[]}
 const sync={busy:false,last:null,err:''};
 function saveQueue(){ls.set(QKEY,JSON.stringify(queue))}
 function fromRemote(rows,c){const o={};rows.forEach(r=>{const d={};for(const k in r){if(k==='id')continue;let v=r[k];if(NUMS[c].includes(k)&&v!==''){const x=Number(String(v).replace(/,/g,''));v=isNaN(x)?v:x}if(v!=='')d[k]=v}o[r.id]=d});return o}
-function applyRemote(r){state.promOK=!!(r.units&&r.units[0]&&('promise' in r.units[0]));data={units:fromRemote(r.units||[],'units'),payments:fromRemote(r.payments||[],'payments'),expenses:fromRemote(r.expenses||[],'expenses'),history:fromRemote(r.history||[],'history'),requests:fromRemote(r.requests||[],'requests')};state.reqOK=Array.isArray(r.requests);save()}
+function applyRemote(r){state.promOK=!!(r.units&&r.units[0]&&('promise' in r.units[0]));data={units:fromRemote(r.units||[],'units'),payments:fromRemote(r.payments||[],'payments'),expenses:fromRemote(r.expenses||[],'expenses'),history:fromRemote(r.history||[],'history'),requests:fromRemote(r.requests||[],'requests'),buildings:fromRemote(r.buildings||[],'buildings')};state.reqOK=Array.isArray(r.requests);save()}
 function setStatus(){
   const el=$('#syncState');if(!el)return;
   let t,cls='';
@@ -1727,7 +1842,7 @@ const db={collection(c){return{add:async o=>{const id=Date.now().toString(36)+Ma
 $('#syncState').addEventListener('click',()=>{syncNow()});
 function download(name,text,type){const b=new Blob([text],{type});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
 $('#backup').addEventListener('click',()=>{download('نسخة-الإيجارات-'+iso(today())+'.json',JSON.stringify(data,null,1),'application/json');toast('انحفظت النسخة الاحتياطية')});
-$('#restoreFile').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{const d=JSON.parse(await f.text());if(!d.units||!d.payments)throw 0;d.expenses=d.expenses||{};d.history=d.history||{};data=d;save();if(sheetUrl){queue=[{op:'replace',table:'units',rows:Object.entries(d.units).map(([id,x])=>({id,...x}))},{op:'replace',table:'payments',rows:Object.entries(d.payments).map(([id,x])=>({id,...x}))},{op:'replace',table:'expenses',rows:Object.entries(d.expenses).map(([id,x])=>({id,...x}))},{op:'replace',table:'history',rows:Object.entries(d.history).map(([id,x])=>({id,...x}))}];saveQueue();syncNow()}toast('رجعت البيانات من النسخة')}catch(_){toast('الملف مو نسخة صحيحة')}e.target.value=''});
+$('#restoreFile').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{const d=JSON.parse(await f.text());if(!d.units||!d.payments)throw 0;d.expenses=d.expenses||{};d.history=d.history||{};d.requests=d.requests||{};d.buildings=d.buildings||{};data=d;save();if(sheetUrl){queue=[{op:'replace',table:'units',rows:Object.entries(d.units).map(([id,x])=>({id,...x}))},{op:'replace',table:'payments',rows:Object.entries(d.payments).map(([id,x])=>({id,...x}))},{op:'replace',table:'expenses',rows:Object.entries(d.expenses).map(([id,x])=>({id,...x}))},{op:'replace',table:'history',rows:Object.entries(d.history).map(([id,x])=>({id,...x}))}];saveQueue();syncNow()}toast('رجعت البيانات من النسخة')}catch(_){toast('الملف مو نسخة صحيحة')}e.target.value=''});
 $('#exportCsv').addEventListener('click',()=>{
   const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
   const rows=[['العقار','الموقع','الوحدة','المستأجر','الجوال','الإيجار السنوي','عدد الدفعات','قيمة الدفعة','الدفعة القادمة','نهاية العقد','رقم العقد','ملاحظات']];
@@ -1743,6 +1858,7 @@ db.collection('payments').onSnapshot(s=>{state.pays=s.docs.map(d=>({id:d.id,...d
 db.collection('expenses').onSnapshot(s=>{state.exps=s.docs.map(d=>({id:d.id,...d.data()}));render()});
 db.collection('history').onSnapshot(s=>{state.hist=s.docs.map(d=>({id:d.id,...d.data()}));render()});
 db.collection('requests').onSnapshot(s=>{state.reqs=s.docs.map(d=>({id:d.id,...d.data()}));render()});
+db.collection('buildings').onSnapshot(s=>{state.bldgs=s.docs.map(d=>({id:d.id,...d.data()}));render()});
 if(!who())setTimeout(()=>{if(!who())try{$('#whoDlg').showModal()}catch(_){}},400);
 setStatus();syncNow();
 })();
