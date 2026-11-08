@@ -982,7 +982,7 @@ function renderPays(){
   const ids=new Set(filtered().map(u=>u.id));
   const P=state.pays.filter(p=>state.prop==='all'&&!state.q?true:ids.has(p.unitId)).slice().sort((a,b)=>(b.date||'').localeCompare(a.date||''));
   const total=P.reduce((a,p)=>a+(+p.amount||0),0);
-  if(!P.length)return `<div class="empty">ما فيه دفعات مسجلة. لما يحوّل مستأجر اضغط «دفع» عند اسمه أو «سجّل دفعة» فوق.</div>`;
+  if(!P.length)return (state.prop!=='all'||state.q)?`<div class="empty">ما فيه دفعات لهذا الفلتر (${esc(state.q||state.prop)}). <button class="mini" type="button" data-clearf="1">اعرض كل الدفعات</button></div>`:`<div class="empty">ما فيه دفعات مسجلة. لما يحوّل مستأجر اضغط «دفع» عند اسمه أو «سجّل دفعة» فوق.</div>`;
   return `<div class="group-h"><span>${P.length} دفعة</span><span class="num">${fmt(total)} ريال</span></div><div class="tbl-wrap"><table><thead><tr><th>التاريخ</th><th>الوحدة</th><th>المستأجر</th><th>المبلغ</th><th>الطريقة</th><th>ملاحظة</th><th></th></tr></thead><tbody>
   ${P.map(p=>{const u=state.units.find(x=>x.id===p.unitId);return `<tr><td class="n">${dmy(p.date)}</td><td>${esc(u?label(u):p.label||'—')}</td><td>${esc(u?u.tenant:'')}</td><td class="n">${fmt(p.amount)}</td><td>${esc(p.method)}</td><td>${esc(p.note)}</td>
   <td style="white-space:nowrap"><button class="btn" type="button" data-rcpt="${p.id}">سند</button> ${state.canWrite?`<button class="btn danger" type="button" data-delpay="${p.id}">حذف</button>`:''}</td></tr>`}).join('')}</tbody></table></div>`;
@@ -1128,7 +1128,7 @@ $('#uDeleteSure').addEventListener('click',async()=>{if(!editing||!state.db)retu
 document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>b.closest('dialog').close()));
 
 /* ---------- events ---------- */
-document.querySelector('.tabs').addEventListener('click',e=>{const t=e.target.closest('.tab');if(!t)return;state.tab=subFor(t.dataset.tab);try{localStorage.setItem('tab2',state.tab)}catch(_){}render();if(matchMedia('(max-width:640px)').matches){const f=document.querySelector('.filters');const y=f.getBoundingClientRect().top+scrollY-8;if(scrollY>y)scrollTo({top:y})}});
+document.querySelector('.tabs').addEventListener('click',e=>{const t=e.target.closest('.tab');if(!t)return;state.tab=subFor(t.dataset.tab);state.prop='all';state.q='';$('#q').value='';try{localStorage.setItem('tab2',state.tab)}catch(_){}render();if(matchMedia('(max-width:640px)').matches){const f=document.querySelector('.filters');const y=f.getBoundingClientRect().top+scrollY-8;if(scrollY>y)scrollTo({top:y})}});
 function labelTables(){document.querySelectorAll('.tbl-wrap table').forEach(t=>{const hs=[...t.querySelectorAll('thead th')].map(th=>th.textContent.trim());t.querySelectorAll('tbody tr').forEach(tr=>{let i=0;[...tr.children].forEach(td=>{if(!td.hasAttribute('data-label'))td.setAttribute('data-label',hs[i]||'');i+=td.colSpan||1})})})}
 new MutationObserver(labelTables).observe($('#view'),{childList:true,subtree:true});labelTables();
 $('#moreBtn').addEventListener('click',()=>{const o=$('#moreBox').classList.toggle('open');$('#moreBtn').setAttribute('aria-expanded',String(o))});
@@ -1385,7 +1385,7 @@ function mStats(y,m,prop){
   const key=y+'-'+pad(m+1), U=state.units.filter(u=>!vacant(u)&&(!prop||u.prop===prop));
   const ids=new Set(state.units.filter(u=>!prop||u.prop===prop).map(u=>u.id));
   const exp=U.reduce((a,u)=>a+(inst(u)&&dueInMonth(u,y,m)?inst(u):0),0);
-  const col=state.pays.filter(p=>(p.date||'').startsWith(key)&&(!prop||ids.has(p.unitId))).reduce((a,p)=>a+(+p.amount||0),0);
+  const col=state.pays.filter(p=>String(p.forDue||p.date||'').startsWith(key)&&(!prop||ids.has(p.unitId))).reduce((a,p)=>a+(+p.amount||0),0);
   const out=state.exps.filter(x=>(x.date||'').startsWith(key)&&(!prop||x.prop===prop)).reduce((a,x)=>a+(+x.amount||0),0);
   return {exp,col,out,net:col-out};
 }
@@ -1671,8 +1671,8 @@ function renderHome(){
   </div>
   <div class="hgrid">
     <div class="panel"><h3>المتأخرين والوعود <small>${late.length+pr.length}</small></h3>${late.concat(pr).length?late.concat(pr).map(u=>li(u,`<span class="amt num">${fmt(overdueCount(u)*(inst(u)||0))}</span>${promised(u)?`<span class="pill prom">وعد ${dmy(u.promise).slice(0,5)}</span>`:broke(u)?'<span class="pill bad">أخلف الوعد</span>':`<span class="pill bad">${-days(u.due)} يوم</span>`}${wa(u)}`)).join(''):'<p class="muted">ما فيه متأخرات، الحمدلله.</p>'}</div>
-    <div class="panel"><h3>يحل قريب <small>خلال 10 أيام</small></h3>${nxt.length?nxt.slice(0,8).map(u=>li(u,`<span class="amt num">${inst(u)?fmt(inst(u)):'—'}</span><span class="pill warn">${dmy(u.due).slice(0,5)}</span>${wa(u)}`)).join('')+(nxt.length>8?`<div class="li"><span class="muted">و${nxt.length-8} غيرهم</span><button class="mini" type="button" data-go="due">الكل</button></div>`:''):'<p class="muted">ما فيه دفعات خلال 10 أيام.</p>'}</div>
     <div class="panel"><h3>آخر الدفعات <small><button class="mini" type="button" data-go="pays">الكل</button></small></h3>${lastP.length?lastP.map(p=>{const u=all.find(z=>z.id===p.unitId);return u?li(u,`<span class="amt num">${fmt(p.amount)}</span><span class="muted">${dmy(p.date).slice(0,5)}</span>`):''}).join(''):'<p class="muted">ما فيه دفعات مسجلة.</p>'}</div>
+    <div class="panel"><h3>يحل قريب <small>خلال 10 أيام</small></h3>${nxt.length?nxt.slice(0,8).map(u=>li(u,`<span class="amt num">${inst(u)?fmt(inst(u)):'—'}</span><span class="pill warn">${dmy(u.due).slice(0,5)}</span>${wa(u)}`)).join('')+(nxt.length>8?`<div class="li"><span class="muted">و${nxt.length-8} غيرهم</span><button class="mini" type="button" data-go="due">الكل</button></div>`:''):'<p class="muted">ما فيه دفعات خلال 10 أيام.</p>'}</div>
     <div class="panel"><h3>تحتاج متابعة</h3>
       <div class="li"><div class="t"><b data-go="contracts">التجديد</b><span>${need.length} عقد يحتاج تجديد · ${yes} وافقوا</span></div><div class="r"><button class="mini" type="button" data-go="contracts">فتح</button></div></div>
       <div class="li"><div class="t"><b data-go="reqs">الصيانة</b><span>${rq.length?rq.length+' طلب مفتوح':'ما فيه طلبات مفتوحة'}</span></div><div class="r"><button class="mini" type="button" data-go="reqs">فتح</button></div></div>
@@ -1739,6 +1739,7 @@ $('#promClear').addEventListener('click',async()=>{if(!promU||!state.db)return;
 const pendingDel=new Set();
 $('#view').addEventListener('click',e=>{
   const px=e.target.closest('[data-proxy]');if(px){$('#'+px.dataset.proxy).click();setTimeout(()=>{if(state.tab==='more')render()},250);return}
+  if(e.target.closest('[data-clearf]')){state.prop='all';state.q='';$('#q').value='';render();return}
   const be=e.target.closest('[data-bedit]');if(be){openBldg(be.dataset.bedit,be.dataset.bprop);return}
   const p=e.target.closest('[data-prof]');if(p&&!e.target.closest('a,select')){openProf(p.dataset.prof);e.stopImmediatePropagation();return}
   const g=e.target.closest('[data-go]');if(g){goTab(g.dataset.go,g.dataset.prop);return}
@@ -1794,7 +1795,7 @@ let queue=[];try{queue=JSON.parse(ls.get(QKEY)||'[]')}catch(_){queue=[]}
 const sync={busy:false,last:null,err:''};
 function saveQueue(){ls.set(QKEY,JSON.stringify(queue))}
 function fromRemote(rows,c){const o={};rows.forEach(r=>{const d={};for(const k in r){if(k==='id')continue;let v=r[k];if(NUMS[c].includes(k)&&v!==''){const x=Number(String(v).replace(/,/g,''));v=isNaN(x)?v:x}if(v!=='')d[k]=v}o[r.id]=d});return o}
-function applyRemote(r){state.promOK=!!(r.units&&r.units[0]&&('promise' in r.units[0]));data={units:fromRemote(r.units||[],'units'),payments:fromRemote(r.payments||[],'payments'),expenses:fromRemote(r.expenses||[],'expenses'),history:fromRemote(r.history||[],'history'),requests:fromRemote(r.requests||[],'requests'),buildings:fromRemote(r.buildings||[],'buildings')};state.reqOK=Array.isArray(r.requests);save()}
+function applyRemote(r){window._prevData=data;state.promOK=!!(r.units&&r.units[0]&&('promise' in r.units[0]));data={units:fromRemote(r.units||[],'units'),payments:fromRemote(r.payments||[],'payments'),expenses:fromRemote(r.expenses||[],'expenses'),history:fromRemote(r.history||[],'history'),requests:fromRemote(r.requests||[],'requests'),buildings:fromRemote(r.buildings||[],'buildings')};state.reqOK=Array.isArray(r.requests);const prev=window._prevData||{};const rec=[];['payments','expenses'].forEach(c=>{const srv=new Set((prev._srv&&prev._srv[c])||[]);Object.entries(prev[c]||{}).forEach(([id,d])=>{if(!data[c][id]&&!srv.has(id)){data[c][id]=d;rec.push({op:'upsert',table:c,row:{id,...d}})}})});data._srv={payments:(r.payments||[]).map(x=>x.id),expenses:(r.expenses||[]).map(x=>x.id)};save();if(rec.length&&sheetUrl){queue.push(...rec);saveQueue();toast('رجّعت '+rec.length+' دفعة/مصروف كانت محفوظة في الجهاز وما وصلت للشيت');setTimeout(syncNow,800)}}
 function setStatus(){
   const el=$('#syncState');if(!el)return;
   let t,cls='';
@@ -1804,7 +1805,7 @@ function setStatus(){
   else if(queue.length){t='في '+queue.length+' تعديل ما وصل للشيت';cls='err'}
   else{t='متزامن مع Google Sheets'+(sync.last?' · '+sync.last.toLocaleTimeString('ar-SA-u-nu-latn',{hour:'numeric',minute:'2-digit'}):'');cls='ok'}
   el.textContent=t;el.dataset.s=cls;
-  $('#localHint').hidden=true;$('#syncBtn').hidden=true;if(!TOKEN){$('#notice').hidden=false;$('#notice').textContent='افتح الدفتر من الرابط اللي وصلك من عمرو أول مرة، وبعدها يشتغل من الأيقونة.'}
+  $('#localHint').hidden=true;$('#syncBtn').hidden=true;if(!TOKEN){$('#notice').hidden=false;$('#notice').innerHTML='<b>الدفتر مو مربوط بالشيت.</b> أي شي تسجله هنا ما راح ينحفظ. الصق الرابط اللي وصلك من عمرو هنا:<div style="display:flex;gap:8px;margin-top:8px"><input id="kIn" dir="ltr" placeholder="الصق الرابط"><button class="btn primary" type="button" id="kGo">ربط</button></div>';$('#kGo').addEventListener('click',()=>{const m=$('#kIn').value.match(/k=([A-Za-z0-9]+)/);if(!m){toast('الرابط ناقص، انسخه كامل');return}try{localStorage.setItem('jj-k',m[1])}catch(_){}location.reload()})}
 }
 async function call(body){
   const r=body?await fetch(sheetUrl,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify({token:TOKEN,by:who(),...body})})
@@ -1852,7 +1853,7 @@ $('#exportCsv').addEventListener('click',()=>{
   rows.push([]);rows.push(['المصاريف']);rows.push(['التاريخ','على','البند','المبلغ','ملاحظة','سجّلها']);
   state.exps.forEach(x=>rows.push([dmy(x.date),expScopeLabel(x),x.category,x.amount,x.note,x.by]));
   download('الإيجارات-'+iso(today())+'.csv','\ufeff'+rows.map(r=>r.map(q).join(',')).join('\r\n'),'text/csv');toast('انصدّر الملف')});
-state.db=db; state.canWrite=true;
+state.db=db; state.canWrite=!!TOKEN;
 db.collection('units').onSnapshot(s=>{state.units=s.docs.map(d=>({id:d.id,...d.data()}));state.loaded.u=true;render()});
 db.collection('payments').onSnapshot(s=>{state.pays=s.docs.map(d=>({id:d.id,...d.data()}));state.loaded.p=true;render()});
 db.collection('expenses').onSnapshot(s=>{state.exps=s.docs.map(d=>({id:d.id,...d.data()}));render()});
