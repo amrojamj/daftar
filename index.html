@@ -711,6 +711,12 @@ dialog::backdrop{background:rgba(0,0,0,.4)}
   <main id="view"><div class="empty">جاري تحميل البيانات…</div></main>
 </div>
 
+<dialog id="delDlg"><div class="dlg">
+  <h2>حذف الوحدة</h2>
+  <p id="delTxt" style="margin:0;line-height:1.9"></p>
+  <div class="foot"><button class="btn" type="button" data-close>إلغاء</button><button class="btn danger" type="button" id="delGo">احذف الوحدة</button></div>
+</div></dialog>
+
 <dialog id="bdDlg"><form class="dlg" id="bdForm" method="dialog">
   <h2>معلومات العمارة</h2>
   <p class="hint" id="bdName" style="margin:-6px 0 0;font-weight:700;color:var(--ink)"></p>
@@ -1169,7 +1175,7 @@ $('#unitForm').addEventListener('submit',async e=>{
   }catch(err){toast(err&&err.code==='permission_denied'?'ما عندك صلاحية تعديل':'ما انحفظ، جرّب مرة ثانية')}
 });
 $('#uDelete').addEventListener('click',()=>{$('#uDeleteSure').hidden=false});
-$('#uDeleteSure').addEventListener('click',async()=>{if(!editing||!state.db)return;try{await state.db.doc('units/'+editing.id).delete();$('#unitDlg').close();toast('انحذفت الوحدة')}catch(e){toast('ما انحذفت')}});
+$('#uDeleteSure').addEventListener('click',async()=>{if(!editing||!state.db)return;if(await delUnitDo(editing))$('#unitDlg').close()});
 document.querySelectorAll('[data-close]').forEach(b=>b.addEventListener('click',()=>b.closest('dialog').close()));
 
 /* ---------- events ---------- */
@@ -1760,7 +1766,7 @@ function openProf(id){
   const [c,tx]=tileCls(u), cs=cstat(u), rt=(!vacant(u)&&!fam(u))?rating(u):null;
   const g=(k,v)=>`<div>${k}<b>${v||'—'}</b></div>`;
   $('#profBox').innerHTML=`<div class="pf-h"><div><h2>${esc(label(u))}</h2><div class="muted">${esc(u.tenant||'شاغرة')}${u.nationality?' · '+esc(u.nationality):''}</div></div><div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end"><span class="pill ${c==='bad'?'bad':c==='warn'?'warn':c==='prom'?'prom':c==='good'?'good':'none'}">${esc(tx)}</span>${rt?`<span class="pill ${rt.c}">${esc(rt.t)}</span>`:''}</div></div>
-  <div class="pf-act">${state.canWrite&&!vacant(u)&&!fam(u)?`<button class="btn primary" type="button" data-pa="pay">سجّل دفعة</button>`:''}${u.phone?`<a class="btn" href="${waLink(u)}" target="_blank" rel="noopener">واتساب</a><a class="btn" href="tel:${esc(u.phone)}">اتصال</a>`:''}<button class="btn" type="button" data-pa="stmt">كشف حساب</button>${state.canWrite?`<button class="btn" type="button" data-pa="edit">تعديل</button>`:''}${vacant(u)?`<button class="btn" type="button" data-pa="ad">إعلان</button>`:''}${u.contractUrl?`<a class="btn" href="${esc(u.contractUrl)}" target="_blank" rel="noopener">العقد</a>`:''}</div>
+  <div class="pf-act">${state.canWrite&&!vacant(u)&&!fam(u)?`<button class="btn primary" type="button" data-pa="pay">سجّل دفعة</button>`:''}${u.phone?`<a class="btn" href="${waLink(u)}" target="_blank" rel="noopener">واتساب</a><a class="btn" href="tel:${esc(u.phone)}">اتصال</a>`:''}<button class="btn" type="button" data-pa="stmt">كشف حساب</button>${state.canWrite?`<button class="btn" type="button" data-pa="edit">تعديل</button><button class="btn danger" type="button" data-pa="del">حذف الوحدة</button>`:''}${vacant(u)?`<button class="btn" type="button" data-pa="ad">إعلان</button>`:''}${u.contractUrl?`<a class="btn" href="${esc(u.contractUrl)}" target="_blank" rel="noopener">العقد</a>`:''}</div>
   <div class="pf-g">${g('الجوال','<span class="num">'+esc(u.phone||'')+'</span>')}${g('الإيجار السنوي',u.rent?fmt(u.rent)+' ريال':'')}${g('الدفعات',u.n?(u.n==12?'شهري':u.n+' بالسنة')+(inst(u)?' · '+fmt(inst(u)):''):'')}${g('الدفعة القادمة',dmy(u.due))}${g('العقد',esc(u.contractNo||''))}${g('مدة العقد',u.contractStart||u.contractEnd?dmy(u.contractStart)+' ← '+dmy(u.contractEnd):'')}${g('حالة العقد',esc(cs.t))}${g('بعد التجديد',renewRent(u)?fmt(renewRent(u)):'')}${g('المؤجر',esc(u.lessor||''))}</div>
   ${u.promise?`<div class="notice" style="margin:0">وعد بالسداد: ${dmy(u.promise)}${u.promiseNote?' — '+esc(u.promiseNote):''}</div>`:''}
   ${u.note?`<div class="pf-s"><h4>ملاحظات</h4><div class="uhist" style="white-space:pre-wrap">${esc(u.note)}</div></div>`:''}
@@ -1771,7 +1777,15 @@ function openProf(id){
   <div class="foot"><span></span><button class="btn" type="button" data-close>إغلاق</button></div>`;
   $('#profBox').dataset.id=id;$('#profDlg').showModal();
 }
-$('#profDlg').addEventListener('click',e=>{const id=$('#profBox').dataset.id;if(e.target.closest('[data-close]'))return $('#profDlg').close();const b=e.target.closest('[data-pa]');if(!b)return;const k=b.dataset.pa;$('#profDlg').close();if(k==='pay')openPay(id);else if(k==='stmt')openStmt(id);else if(k==='edit')openUnit(id);else if(k==='ad')openAd(id)});
+$('#profDlg').addEventListener('click',e=>{const id=$('#profBox').dataset.id;if(e.target.closest('[data-close]'))return $('#profDlg').close();const b=e.target.closest('[data-pa]');if(!b)return;const k=b.dataset.pa;$('#profDlg').close();if(k==='pay')openPay(id);else if(k==='stmt')openStmt(id);else if(k==='edit')openUnit(id);else if(k==='ad')openAd(id);else if(k==='del')askDelUnit(id)});
+let delU=null;
+function askDelUnit(id){delU=state.units.find(x=>x.id===id);if(!delU)return;const np=state.pays.filter(p=>p.unitId===id).length;
+  $('#delTxt').innerHTML='<b>'+esc(label(delU))+'</b>'+(delU.tenant?' — '+esc(delU.tenant):'')+'<br>بتنحذف الوحدة من الدفتر والشيت.'+(np?' الدفعات المسجلة لها ('+np+') تبقى في سجل الدفعات.':'')+'<br>نسخة من بياناتها تنحفظ في «المستأجرين السابقين» عشان لو احتجتها.';
+  $('#delDlg').showModal()}
+async function delUnitDo(u){if(!u||!state.db)return false;
+  try{await state.db.collection('history').add({unitId:u.id,label:label(u),tenant:u.tenant||'(وحدة محذوفة)',phone:u.phone||'',nationality:u.nationality||'',rent:u.rent??'',n:u.n??'',contractNo:u.contractNo||'',contractStart:u.contractStart||'',contractEnd:u.contractEnd||'',leftAt:iso(today()),note:'انحذفت الوحدة من الدفتر — نسخة بياناتها: '+JSON.stringify(u).slice(0,1500),createdAt:new Date().toISOString()});
+    await state.db.doc('units/'+u.id).delete();toast('انحذفت '+label(u));return true}catch(e){toast('ما انحذفت، جرّب مرة ثانية');return false}}
+$('#delDlg').addEventListener('click',async e=>{if(e.target.closest('[data-close]'))return $('#delDlg').close();if(e.target.closest('#delGo')){const ok=await delUnitDo(delU);if(ok)$('#delDlg').close()}});
 let promU=null;
 function openPromise(id){promU=state.units.find(x=>x.id===id);if(!promU)return;
   const d=new Date();d.setDate(d.getDate()+7);
