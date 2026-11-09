@@ -866,7 +866,7 @@ let theme='auto';try{theme=localStorage.getItem(THK)||'auto'}catch(_){}
 applyTheme(theme);
 document.getElementById('themeBtn').addEventListener('click',()=>{theme=theme==='dark'?'light':'dark';try{localStorage.setItem(THK,theme)}catch(_){}applyTheme(theme)});
 const PAYTXT='\n\nالسداد عن طريق منصة إيجار فقط (تطبيق إيجار أو موقع ejar.sa ← دفعات العقود). ما نقبل السداد نقداً ولا بالتحويل.';
-const state={units:[],pays:[],exps:[],hist:[],reqs:[],bldgs:[],tab:'due',prop:'all',q:'',db:null,canWrite:true,loaded:{u:false,p:false},rpMonth:''};
+const state={units:[],pays:[],exps:[],hist:[],reqs:[],bldgs:[],ejar:[],tab:'due',prop:'all',q:'',db:null,canWrite:true,loaded:{u:false,p:false},rpMonth:''};
 const DEFAULT_WHO='', WKEY='jamjoom-who';
 const PROP_T={'الحمدانية':'فلل الحمدانية','المروة':'عمارة المروة','متفرقة':'الشقق المتفرقة'};
 const MONTHS=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
@@ -916,6 +916,30 @@ function waLink(u){
   return 'https://wa.me/'+intl(u.phone)+'?text='+encodeURIComponent(msg);
 }
 
+function paidFor(u,d){return state.pays.filter(p=>p.unitId===u.id&&p.forDue===d).reduce((a,p)=>a+(+p.amount||0),0)}
+function remainFor(u){const i=inst(u);if(!i||!u.due)return 0;const s=paidFor(u,u.due);return s>0&&s<i-1?Math.round(i-s):0}
+function partPill(u){const r=remainFor(u);return r?`<span class="pill warn">مسدد جزئي · باقي ${fmt(r)}</span>`:''}
+function ejOf(u){return state.ejar.find(e=>e.unitId===u.id)||null}
+function ejKind(u){const e=ejOf(u);if(!e||vacant(u)||fam(u))return '';const ua=+e.unpaidAmt||0;if(!ua)return 'ok';return (days(u.due)??0)<0?'late':'gap'}
+function ejPill(u){const k=ejKind(u),e=ejOf(u);if(!k)return '';if(k==='ok')return '<span class="pill good" title="حسب منصة إيجار">✓ مسدد في إيجار</span>';
+  return k==='late'?`<span class="pill bad">✗ متأخر في إيجار ${fmt(e.unpaidAmt)}</span>`:`<span class="pill warn" title="مسجل عندنا مسدد، بس إيجار ما يعرف">⚠ مو مسجل في إيجار ${fmt(e.unpaidAmt)}</span>`}
+function renderEjar(){
+  if(!state.loaded.u)return emptyMsg();
+  const U=filtered().filter(u=>!vacant(u)&&!fam(u));
+  const last=state.ejar.reduce((a,e)=>(e.syncedAt||'')>a?e.syncedAt:a,'');
+  if(!state.ejar.length)return `<div class="empty">ما فيه بيانات من إيجار للحين. قول لـ Claude «حدّث من إيجار» وأنت داخل حساب إيجار في المتصفح.</div>`;
+  const G={late:[],gap:[],ok:[],none:[]};U.forEach(u=>{const k=ejKind(u)||'none';G[k].push(u)});
+  const item=u=>{const e=ejOf(u);return `<div class="li"><div class="t"><b data-prof="${u.id}">${esc(label(u))}</b><span>${esc(u.tenant||'')}${e?' · عقد '+esc(e.contractNo):''}</span>
+    ${e?`<span>${+e.unpaid?`عليه في إيجار ${e.unpaid} ${+e.unpaid>1?'أقساط':'قسط'} = ${fmt(e.unpaidAmt)} ريال`:'كل أقساطه مسددة في إيجار'}${e.paidUpTo?' · آخر قسط مسدد '+dmy(e.paidUpTo):''}${e.nextDue?' · الجاي '+dmy(e.nextDue)+' ('+fmt(e.nextAmt)+')':''}</span>`:''}
+    <span>عندنا: الدفعة القادمة ${dmy(u.due)}${(days(u.due)??0)<0?' (متأخر)':''}</span></div><div class="r">${ejPill(u)}</div></div>`};
+  const sec=(t,h,arr)=>arr.length?`<div class="panel" style="margin-bottom:12px"><h3>${t} <small>${arr.length}</small></h3><p class="hint" style="margin:0 0 6px">${h}</p>${arr.map(item).join('')}</div>`:'';
+  return `<p class="hint">آخر تحديث من منصة إيجار: <b>${last?dmy(last.slice(0,10)):'—'}</b>. إيجار يعرف بس الدفعات اللي انسددت عن طريق المنصة.</p>
+  <div class="bsum"><div><b class="num" style="color:var(--bad)">${G.late.length}</b><span>متأخر فعلياً</span></div><div><b class="num" style="color:var(--warn)">${G.gap.length}</b><span>مو مسجل في إيجار</span></div><div><b class="num" style="color:var(--good)">${G.ok.length}</b><span>مسدد في إيجار</span></div><div><b class="num">${G.none.length}</b><span>ما لها عقد في حساب فراس</span></div></div>`
+   +sec('✗ متأخر فعلياً','ما سدد عن طريق إيجار، وعندنا بعد متأخر. هذول اللي لازم تتابعهم.',G.late)
+   +sec('⚠ مسدد عندنا بس مو مسجل في إيجار','عندنا مسجل إنه دفع، بس إيجار يقول لا. لو دفع كاش أو تحويل، فراس يسجل في إيجار إن الإيجار انستلم خارج المنصة. ولو ما دفع، نعدل موعده عندنا.',G.gap)
+   +sec('✓ مسدد في إيجار','',G.ok)
+   +sec('ما لها عقد في حساب فراس','عقودها غالباً في حساب الوالد، أو ما لها عقد.',G.none);
+}
 function rowHTML(u,mode){
   const s=stat(u), amt=inst(u), od=(days(u.due)??0)<0, pm=promised(u), br=broke(u);
   return `<div class="row ${pm?'prom':s.c}"><div class="mark"></div>
@@ -923,7 +947,7 @@ function rowHTML(u,mode){
       <div class="meta"><span class="num">${u.phone?esc(u.phone):'الجوال ناقص'}</span><span>الدفعة القادمة: <b class="num">${dmy(u.due)}</b></span>${u.n?`<span>${u.n===12?'شهري':u.n===1?'سنوي':u.n+' دفعات'}</span>`:'<span>عدد الدفعات ناقص</span>'}</div>
       ${u.promise&&od?`<div class="note"><b>${br?'أخلف الوعد':'وعد بالسداد'}: ${dmy(u.promise)}</b>${u.promiseNote?' — '+esc(u.promiseNote):''}</div>`:''}
       ${u.note?`<div class="note">${esc(u.note)}</div>`:''}</div>
-    <div class="side">${pm?`<span class="pill prom">وعد ${dmy(u.promise).slice(0,5)}</span>`:br?`<span class="pill bad">أخلف الوعد ${dmy(u.promise).slice(0,5)}</span>`:''}${vacant(u)?'<span class="pill vac">شاغرة</span>':u.status==='صيانة'?'<span class="pill warn">تحت الصيانة</span>':''}<span class="pill ${s.c}">${s.t}</span><span class="amt">${amt?fmt(amt)+' ريال':'المبلغ ناقص'}</span>
+    <div class="side">${partPill(u)}${ejPill(u)}${pm?`<span class="pill prom">وعد ${dmy(u.promise).slice(0,5)}</span>`:br?`<span class="pill bad">أخلف الوعد ${dmy(u.promise).slice(0,5)}</span>`:''}${vacant(u)?'<span class="pill vac">شاغرة</span>':u.status==='صيانة'?'<span class="pill warn">تحت الصيانة</span>':''}<span class="pill ${s.c}">${s.t}</span><span class="amt">${amt?fmt(amt)+' ريال':'المبلغ ناقص'}</span>
       <div class="actions">
         ${state.canWrite?`<button class="btn primary" type="button" data-pay="${u.id}">دفع</button>`:''}
         ${state.canWrite&&od&&state.promOK?`<button class="btn" type="button" data-promise="${u.id}">${u.promise?'تعديل الوعد':'وعد'}</button>`:''}
@@ -1000,8 +1024,8 @@ function syncProps(){
   Object.keys(PROP_T).forEach(p=>{if(!bar.querySelector('.chip[data-prop="'+p+'"]')){const b=document.createElement('button');b.className='chip';b.dataset.prop=p;b.setAttribute('aria-pressed','false');b.textContent=p;bar.appendChild(b)}});
   const sel=$('#uProp');Object.keys(PROP_T).forEach(p=>{if(![...sel.options].some(o=>o.value===p)){const o=document.createElement('option');o.value=p;o.textContent=p;sel.appendChild(o)}});
 }
-const GRP={home:['home'],due:['due'],estate:['units','map','bldgs','contracts','reqs'],money:['pays','expenses','reports'],more:['more']};
-const SUBT={units:'الوحدات',map:'الخريطة',bldgs:'العمائر',contracts:'العقود',reqs:'الصيانة',pays:'الدفعات',expenses:'المصاريف',reports:'التقارير'};
+const GRP={home:['home'],due:['due','ejar'],estate:['units','map','bldgs','contracts','reqs'],money:['pays','expenses','reports'],more:['more']};
+const SUBT={due:'المستحق',ejar:'مقارنة إيجار',units:'الوحدات',map:'الخريطة',bldgs:'العمائر',contracts:'العقود',reqs:'الصيانة',pays:'الدفعات',expenses:'المصاريف',reports:'التقارير'};
 const GT={home:'',due:'المتابعة',estate:'العقارات',money:'المالية',more:'المزيد'};
 const grpOf=t=>Object.keys(GRP).find(g=>GRP[g].includes(t))||'home';
 state.ls={};
@@ -1054,7 +1078,7 @@ function render(){
   summary();
   if(!GRP[grpOf(state.tab)].includes(state.tab))state.tab='home';const G0=grpOf(state.tab);state.ls[G0]=state.tab;document.querySelectorAll('.tab').forEach(t=>t.setAttribute('aria-selected',String(t.dataset.tab===G0)));renderSub();
   document.querySelectorAll('.chip').forEach(c=>c.setAttribute('aria-pressed',String(c.dataset.prop===state.prop)));
-  $('#view').innerHTML=state.tab==='home'?renderHome():state.tab==='due'?(state.dview==='cal'?renderCal():renderDue()):state.tab==='units'||state.tab==='map'?(state.uview=state.tab==='map'?'map':'list',renderUnits()):state.tab==='bldgs'?renderBldgs():state.tab==='reqs'?(renderReqs()||'<div class="empty">طلبات الصيانة تشتغل بعد ما يتزامن التطبيق مع الشيت.</div>'):state.tab==='more'?renderMore():state.tab==='contracts'?renderContracts():state.tab==='expenses'?renderExpenses():state.tab==='reports'?renderReports():renderPays();
+  $('#view').innerHTML=state.tab==='home'?renderHome():state.tab==='due'?(state.dview==='cal'?renderCal():renderDue()):state.tab==='units'||state.tab==='map'?(state.uview=state.tab==='map'?'map':'list',renderUnits()):state.tab==='bldgs'?renderBldgs():state.tab==='ejar'?renderEjar():state.tab==='reqs'?(renderReqs()||'<div class="empty">طلبات الصيانة تشتغل بعد ما يتزامن التطبيق مع الشيت.</div>'):state.tab==='more'?renderMore():state.tab==='contracts'?renderContracts():state.tab==='expenses'?renderExpenses():state.tab==='reports'?renderReports():renderPays();
   document.querySelector('.filters').hidden=['home','more','bldgs'].includes(state.tab);
   $('#pageTitle').textContent=G0==='home'?greet()+(who()?' يا '+who():''):GT[G0];
   if(state._lt!==state.tab){state._lt=state.tab;const v=$('#view');v.classList.remove('enter');void v.offsetWidth;v.classList.add('enter');if(state.tab==='home')requestAnimationFrame(countUp)}
@@ -1072,23 +1096,39 @@ function openPay(unitId){
 }
 function syncPay(){
   const u=state.units.find(x=>x.id===$('#payUnit').value); if(!u)return;
-  $('#payAmt').value=inst(u)?Math.round(inst(u)):'';
+  const rem=remainFor(u);$('#payAmt').value=rem||(inst(u)?Math.round(inst(u)):'');
   const can=!!(u.n&&u.due);
   $('#payAdvance').disabled=!can; if(!can)$('#payAdvance').checked=false;
-  $('#payHint').textContent=can?('الموعد الحالي '+dmy(u.due)+' — بعد الحفظ يصير '+dmy(addMonths(u.due,12/u.n))):'عدد الدفعات أو الموعد ناقص، فالموعد ما بيتغير. عدّله من «تعديل».';
+  $('#paySave').dataset.ok='';$('#paySave').textContent='حفظ الدفعة';payHint();
+}
+function payHint(){
+  const u=state.units.find(x=>x.id===$('#payUnit').value); if(!u)return;
+  const can=!!(u.n&&u.due), i=inst(u), before=paidFor(u,u.due), amt=+$('#payAmt').value||0;
+  let t=can?'الموعد الحالي '+dmy(u.due):'عدد الدفعات أو الموعد ناقص، فالموعد ما بيتغير. عدّله من «تعديل».';
+  if(can&&i){if(before)t+=' — مسدد منه قبل '+fmt(before);
+    if(before+amt<i-1)t+=' — هذي دفعة جزئية، الباقي بعدها '+fmt(i-before-amt)+' والموعد يبقى نفسه';
+    else t+=' — بعد الحفظ يصير '+dmy(addMonths(u.due,12/u.n))}
+  const rc=state.pays.filter(p=>p.unitId===u.id&&(Date.now()-new Date(p.createdAt||p.date).getTime())<4*864e5);
+  const w=rc.length?'انتبه: سجلت له دفعة '+fmt(rc[0].amount)+' بتاريخ '+dmy(rc[0].date)+'. تأكد إنها مو نفس الدفعة.':'';
+  $('#payHint').innerHTML=esc(t)+(w?'<br><b style="color:var(--bad)">'+esc(w)+'</b>':'');
+  $('#payHint').dataset.dup=w?'1':'';
 }
 $('#payUnit').addEventListener('change',syncPay);
+$('#payAmt').addEventListener('input',payHint);
 $('#payForm').addEventListener('submit',async e=>{
   e.preventDefault(); if(!state.db)return;
   const u=state.units.find(x=>x.id===$('#payUnit').value); const amt=+$('#payAmt').value;
   if(!u||!amt){toast('اكتب المبلغ');return}
+  if($('#payHint').dataset.dup&&!$('#paySave').dataset.ok){$('#paySave').dataset.ok='1';$('#paySave').textContent='متأكد، سجّلها';toast('فيه دفعة قريبة لنفس المستأجر — اضغط مرة ثانية لو متأكد');return}
   $('#paySave').disabled=true;
   try{
     const rec={date:$('#payDate').value,unitId:u.id,label:label(u),tenant:u.tenant,amount:amt,method:$('#payMethod').value,note:$('#payNote').value.trim(),forDue:u.due||'',createdAt:new Date().toISOString()};
+    const i0=inst(u), tot=paidFor(u,u.due)+amt, part=!!(i0&&u.due&&tot<i0-1);
+    if(part)rec.note=('دفعة جزئية — الباقي '+fmt(i0-tot)+(rec.note?' · '+rec.note:''));
     const ref=await state.db.collection('payments').add(rec);
-    const upd={};if($('#payAdvance').checked&&u.n&&u.due)upd.due=addMonths(u.due,12/u.n);if(u.promise){upd.promise='';upd.promiseNote=''}
+    const upd={};if(!part&&$('#payAdvance').checked&&u.n&&u.due)upd.due=addMonths(u.due,12/u.n);if(u.promise){upd.promise='';upd.promiseNote=''}
     if(Object.keys(upd).length)await state.db.doc('units/'+u.id).update(upd);
-    $('#payDlg').close(); toast('انحفظت الدفعة'); openReceipt({id:ref.id,...rec});
+    $('#payDlg').close(); toast(part?'انحفظت كدفعة جزئية — الباقي '+fmt(i0-tot):'انحفظت الدفعة'); openReceipt({id:ref.id,...rec});
   }catch(err){toast(err&&err.code==='permission_denied'?'ما عندك صلاحية تعديل':'ما انحفظت، جرّب مرة ثانية')}
   finally{$('#paySave').disabled=false}
 });
@@ -1768,7 +1808,8 @@ $('#view').addEventListener('click',async e=>{
   if(b.id==='rpPrint'){try{window.print()}catch(_){toast('الطباعة ما اشتغلت هنا')}return}
   if(b.dataset.rcpt)return openReceipt(state.pays.find(p=>p.id===b.dataset.rcpt));
   if(b.dataset.delpay){const id=b.dataset.delpay;if(!pendingDel.has(id)){pendingDel.add(id);b.textContent='متأكد؟';setTimeout(()=>{pendingDel.delete(id);if(b.isConnected)b.textContent='حذف'},4000);return}
-    try{await state.db.doc('payments/'+id).delete();toast('انحذفت الدفعة')}catch(_){toast('ما انحذفت')}}
+    try{const p=state.pays.find(x=>x.id===id),u=p&&state.units.find(x=>x.id===p.unitId);await state.db.doc('payments/'+id).delete();
+      if(p&&u&&p.forDue&&u.due&&u.due>p.forDue&&!state.pays.some(q=>q.id!==id&&q.unitId===u.id&&(q.forDue||'')>p.forDue)){await state.db.doc('units/'+u.id).update({due:p.forDue});toast('انحذفت الدفعة ورجع موعده '+dmy(p.forDue))}else toast('انحذفت الدفعة')}catch(_){toast('ما انحذفت')}}
 });
 
 try{const t=localStorage.getItem('tab2');state.tab=t||'home';state.uview=localStorage.getItem('uview')||'list'}catch(_){state.uview='list'}
@@ -1779,15 +1820,15 @@ const KEY='jamjoom-rent-ledger-pwa';
 const SEED={};
 let data=null; try{data=JSON.parse(localStorage.getItem(KEY)||'null')}catch(_){}
 if(!data||!data.units){data={units:JSON.parse(JSON.stringify(SEED)),payments:{}}}
-if(!data.expenses)data.expenses={}; if(!data.history)data.history={}; if(!data.requests)data.requests={}; if(!data.buildings)data.buildings={};
-const listeners={units:[],payments:[],expenses:[],history:[],requests:[],buildings:[]};
+if(!data.expenses)data.expenses={}; if(!data.history)data.history={}; if(!data.requests)data.requests={}; if(!data.buildings)data.buildings={}; if(!data.ejar)data.ejar={};
+const listeners={units:[],payments:[],expenses:[],history:[],requests:[],buildings:[],ejar:[]};
 const snap=c=>({docs:Object.entries(data[c]).map(([id,d])=>({id,data:()=>d}))});
 function emit(){for(const c in listeners)listeners[c].forEach(f=>f(snap(c)))}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(data))}catch(_){ $('#notice').hidden=false;$('#notice').textContent='المتصفح ما سمح بالحفظ. خذ نسخة احتياطية قبل ما تقفل الصفحة.'}emit()}
 
 /* ---------- Google Sheets sync ---------- */
 const TOKEN=(()=>{let t='';try{const m=location.hash.match(/k=([A-Za-z0-9]+)/);if(m){t=m[1];localStorage.setItem('jj-k',t)}else t=localStorage.getItem('jj-k')||''}catch(_){}return t})(), URLKEY='jamjoom-sheet-url', QKEY='jamjoom-sheet-queue';
-const NUMS={units:['rent','n','newRent'],payments:['amount'],expenses:['amount'],history:['rent','n'],requests:['cost'],buildings:[]};
+const NUMS={units:['rent','n','newRent'],payments:['amount'],expenses:['amount'],history:['rent','n'],requests:['cost'],buildings:[],ejar:['unpaid','unpaidAmt','nextAmt']};
 const ls={get(k){try{return localStorage.getItem(k)}catch(_){return null}},set(k,v){try{v==null?localStorage.removeItem(k):localStorage.setItem(k,v)}catch(_){}}};
 const DEFAULT_URL='https://script.google.com/macros/s/AKfycbyCt55jZ9VyOyv36VhFGRjQseN9qpK1c1A4pld_QKHoG86ndH6fcVv6Tb-nVuZH5fyE/exec';
 let sheetUrl=TOKEN?DEFAULT_URL:'';
@@ -1795,7 +1836,7 @@ let queue=[];try{queue=JSON.parse(ls.get(QKEY)||'[]')}catch(_){queue=[]}
 const sync={busy:false,last:null,err:''};
 function saveQueue(){ls.set(QKEY,JSON.stringify(queue))}
 function fromRemote(rows,c){const o={};rows.forEach(r=>{const d={};for(const k in r){if(k==='id')continue;let v=r[k];if(NUMS[c].includes(k)&&v!==''){const x=Number(String(v).replace(/,/g,''));v=isNaN(x)?v:x}if(v!=='')d[k]=v}o[r.id]=d});return o}
-function applyRemote(r){window._prevData=data;state.promOK=!!(r.units&&r.units[0]&&('promise' in r.units[0]));data={units:fromRemote(r.units||[],'units'),payments:fromRemote(r.payments||[],'payments'),expenses:fromRemote(r.expenses||[],'expenses'),history:fromRemote(r.history||[],'history'),requests:fromRemote(r.requests||[],'requests'),buildings:fromRemote(r.buildings||[],'buildings')};state.reqOK=Array.isArray(r.requests);const prev=window._prevData||{};const rec=[];['payments','expenses'].forEach(c=>{const srv=new Set((prev._srv&&prev._srv[c])||[]);Object.entries(prev[c]||{}).forEach(([id,d])=>{if(!data[c][id]&&!srv.has(id)){data[c][id]=d;rec.push({op:'upsert',table:c,row:{id,...d}})}})});data._srv={payments:(r.payments||[]).map(x=>x.id),expenses:(r.expenses||[]).map(x=>x.id)};save();if(rec.length&&sheetUrl){queue.push(...rec);saveQueue();toast('رجّعت '+rec.length+' دفعة/مصروف كانت محفوظة في الجهاز وما وصلت للشيت');setTimeout(syncNow,800)}}
+function applyRemote(r){window._prevData=data;state.promOK=!!(r.units&&r.units[0]&&('promise' in r.units[0]));data={units:fromRemote(r.units||[],'units'),payments:fromRemote(r.payments||[],'payments'),expenses:fromRemote(r.expenses||[],'expenses'),history:fromRemote(r.history||[],'history'),requests:fromRemote(r.requests||[],'requests'),buildings:fromRemote(r.buildings||[],'buildings'),ejar:fromRemote(r.ejar||[],'ejar')};state.reqOK=Array.isArray(r.requests);const prev=window._prevData||{};const rec=[];['payments','expenses'].forEach(c=>{const srv=new Set((prev._srv&&prev._srv[c])||[]);Object.entries(prev[c]||{}).forEach(([id,d])=>{if(!data[c][id]&&!srv.has(id)){data[c][id]=d;rec.push({op:'upsert',table:c,row:{id,...d}})}})});data._srv={payments:(r.payments||[]).map(x=>x.id),expenses:(r.expenses||[]).map(x=>x.id)};save();if(rec.length&&sheetUrl){queue.push(...rec);saveQueue();toast('رجّعت '+rec.length+' دفعة/مصروف كانت محفوظة في الجهاز وما وصلت للشيت');setTimeout(syncNow,800)}}
 function setStatus(){
   const el=$('#syncState');if(!el)return;
   let t,cls='';
@@ -1860,6 +1901,7 @@ db.collection('expenses').onSnapshot(s=>{state.exps=s.docs.map(d=>({id:d.id,...d
 db.collection('history').onSnapshot(s=>{state.hist=s.docs.map(d=>({id:d.id,...d.data()}));render()});
 db.collection('requests').onSnapshot(s=>{state.reqs=s.docs.map(d=>({id:d.id,...d.data()}));render()});
 db.collection('buildings').onSnapshot(s=>{state.bldgs=s.docs.map(d=>({id:d.id,...d.data()}));render()});
+db.collection('ejar').onSnapshot(s=>{state.ejar=s.docs.map(d=>({id:d.id,...d.data()}));render()});
 if(!who())setTimeout(()=>{if(!who())try{$('#whoDlg').showModal()}catch(_){}},400);
 setStatus();syncNow();
 })();
