@@ -673,7 +673,7 @@ dialog::backdrop{background:rgba(0,0,0,.4)}
       <button class="btn" id="waMode" type="button">واتساب: …</button>
       <button class="btn" id="rqLink" type="button">رابط طلبات الصيانة</button>
       </div>
-      <button class="btn primary" id="addPayTop" type="button">سجّل دفعة</button>
+      <button class="btn" id="addUnitTop" type="button" hidden>+ وحدة جديدة</button><button class="btn primary" id="addPayTop" type="button">سجّل دفعة</button>
     </div>
   </header>
 
@@ -742,7 +742,7 @@ dialog::backdrop{background:rgba(0,0,0,.4)}
 <dialog id="unitDlg"><form class="dlg" id="unitForm" method="dialog">
   <h2 id="unitTitle">تعديل الوحدة</h2>
   <div class="grid2">
-    <label class="f">العقار<select id="uProp"><option>الحمدانية</option><option>المروة</option><option>متفرقة</option></select></label>
+    <label class="f">العقار<select id="uProp"><option>الحمدانية</option><option>المروة</option><option>متفرقة</option><option value="__new">+ عقار جديد…</option></select><input id="uPropNew" placeholder="اسم العقار الجديد، مثلاً: النسيم" hidden></label>
     <label class="f">الموقع<input id="uLoc" placeholder="مثلاً: الحلقة"></label>
     <label class="f">الوحدة<input id="uUnit" required placeholder="شقة 5 / فيلا 2"></label>
     <label class="f">الجوال<input id="uPhone" inputmode="tel" placeholder="05xxxxxxxx"></label>
@@ -1022,7 +1022,7 @@ function syncProps(){
   state.units.forEach(u=>{if(u.prop&&!PROP_T[u.prop])PROP_T[u.prop]=u.loc||u.prop});
   const bar=document.querySelector('.chips');
   Object.keys(PROP_T).forEach(p=>{if(!bar.querySelector('.chip[data-prop="'+p+'"]')){const b=document.createElement('button');b.className='chip';b.dataset.prop=p;b.setAttribute('aria-pressed','false');b.textContent=p;bar.appendChild(b)}});
-  const sel=$('#uProp');Object.keys(PROP_T).forEach(p=>{if(![...sel.options].some(o=>o.value===p)){const o=document.createElement('option');o.value=p;o.textContent=p;sel.appendChild(o)}});
+  const sel=$('#uProp');Object.keys(PROP_T).forEach(p=>{if(![...sel.options].some(o=>o.value===p)){const o=document.createElement('option');o.value=p;o.textContent=p;sel.insertBefore(o,sel.querySelector('option[value="__new"]'))}});
 }
 const GRP={home:['home'],due:['due','ejar'],estate:['units','map','bldgs','contracts','reqs'],money:['pays','expenses','reports'],more:['more']};
 const SUBT={due:'المستحق',ejar:'مقارنة إيجار',units:'الوحدات',map:'الخريطة',bldgs:'العمائر',contracts:'العقود',reqs:'الصيانة',pays:'الدفعات',expenses:'المصاريف',reports:'التقارير'};
@@ -1051,7 +1051,7 @@ function renderBldgs(){
       <div class="bk-m"><span>الإيجار السنوي <b class="num">${fmt(rent)}</b></span><span>محصّل ${ys} <b class="num">${fmt(col[k]||0)}</b></span></div>
       <div class="occ"><i style="width:${occ}%"></i></div><div class="muted" style="font-size:.78rem;margin-top:4px">إشغال ${occ}%${fm?' · '+fm+' سكن عائلي':''}</div>
       ${bi.deed||bi.owner||bi.notes?`<div class="bk-i">${kv('رقم الصك',esc(bi.deed||''))}${kv('المالك',esc(bi.owner||''))}${kv('ملاحظات',esc(bi.notes||''))}</div>`:''}
-      <div class="bk-a"><button class="mini" type="button" data-go="map" data-prop="${esc(g.p)}">الوحدات</button>${/^https:/.test(bi.mapUrl||'')?`<a class="mini" href="${esc(bi.mapUrl)}" target="_blank" rel="noopener">الموقع</a>`:''}</div></article>`}).join('')}</div>
+      <div class="bk-a"><button class="mini" type="button" data-go="map" data-prop="${esc(g.p)}">الوحدات</button>${state.canWrite?`<button class="mini" type="button" data-addu="${esc(g.p)}" data-addl="${esc(k)}">+ وحدة</button>`:''}${/^https:/.test(bi.mapUrl||'')?`<a class="mini" href="${esc(bi.mapUrl)}" target="_blank" rel="noopener">الموقع</a>`:''}</div></article>`}).join('')}</div>
   <p class="hint">«تعديل» تضيف فيها معلومات العمارة (الحي، رقم الصك، المالك، رابط الموقع). تنحفظ في شيت قوقل في تبويب «العمائر».</p>`;
 }
 function renderMore(){
@@ -1061,7 +1061,7 @@ function renderMore(){
   const sec=(h,x)=>x?`<section class="ms"><h3>${h}</h3><div class="mc">${x}</div></section>`:'';
   const SH='https:'+'/'+'/docs.google.com/spreadsheets/d/12u_Ohsfygn6UC66vXTLwjq8BkT4oKNEwwYaQT8stsE0/edit';
   return `<div class="mgrid">`+sec('التواصل',it('bcOpen','رسالة لكل المستأجرين','تذكير جماعي بقرب موعد الإيجار')+it('wkOpen','ملخص الأسبوع لفراس','كل اللي صار هذا الأسبوع في رسالة وحدة')+it('rqLink','رابط طلبات الصيانة','ترسله للمستأجرين يرفعون منه طلب'))
-   +sec('البيانات',`<a class="mi" href="${SH}" target="_blank" rel="noopener"><span class="mt"><b>فتح شيت قوقل</b><small>كل البيانات والتقارير في جداول</small></span><span class="ma" aria-hidden="true">‹</span></a>`+it('exportCsv','تصدير Excel','')+it('backup','نسخة احتياطية','ينزل ملف فيه كل البيانات')+it('restoreFile','استرجاع من نسخة','')+it('syncBtn','ربط Google Sheets',''))
+   +sec('الوحدات',state.canWrite?`<button type="button" class="mi" data-qa="unit"><span class="mt"><b>إضافة وحدة جديدة</b><small>شقة أو فيلا أو محل، في عقار موجود أو جديد</small></span><span class="ma" aria-hidden="true">‹</span></button>`:'')+sec('البيانات',`<a class="mi" href="${SH}" target="_blank" rel="noopener"><span class="mt"><b>فتح شيت قوقل</b><small>كل البيانات والتقارير في جداول</small></span><span class="ma" aria-hidden="true">‹</span></a>`+it('exportCsv','تصدير Excel','')+it('backup','نسخة احتياطية','ينزل ملف فيه كل البيانات')+it('restoreFile','استرجاع من نسخة','')+it('syncBtn','ربط Google Sheets',''))
    +sec('الإعدادات',it('whoBtn','المستخدم',val('whoBtn'))+it('themeBtn','المظهر',val('themeBtn'))+it('waMode','الواتساب',val('waMode')))
    +`</div><p class="hint" style="text-align:center">${esc(($('#syncState')||{}).textContent||'')}</p>`;
 }
@@ -1072,6 +1072,7 @@ $('#bdForm').addEventListener('submit',async e=>{e.preventDefault();if(!state.db
   const body={district:$('#bdDist').value.trim(),floors:$('#bdFloors').value.trim(),deed:$('#bdDeed').value.trim(),owner:$('#bdOwner').value.trim(),mapUrl:mu,notes:$('#bdNotes').value.trim(),updatedAt:new Date().toISOString()};
   try{if(ex)await state.db.doc('buildings/'+ex.id).update(body);else await state.db.collection('buildings').add({name,prop:f.dataset.prop,...body});$('#bdDlg').close();toast('انحفظت معلومات العمارة')}catch(_){toast('ما انحفظت، جرّب مرة ثانية')}});
 $('#bdDlg').addEventListener('click',e=>{if(e.target.closest('[data-close]'))$('#bdDlg').close()});
+$('#addUnitTop').addEventListener('click',()=>openUnit(null,state.prop&&state.prop!=='all'?{prop:state.prop}:null));
 $('#subnav').addEventListener('click',e=>{const b=e.target.closest('[data-sub]');if(b)goTab(b.dataset.sub)});
 function render(){
   syncProps();
@@ -1083,7 +1084,7 @@ function render(){
   $('#pageTitle').textContent=G0==='home'?greet()+(who()?' يا '+who():''):GT[G0];
   if(state._lt!==state.tab){state._lt=state.tab;const v=$('#view');v.classList.remove('enter');void v.offsetWidth;v.classList.add('enter');if(state.tab==='home')requestAnimationFrame(countUp)}
   $('#whoBtn').textContent='المستخدم: '+(who()||'—');
-  $('#addPayTop').hidden=!state.canWrite||['home','more'].includes(state.tab);
+  $('#addPayTop').hidden=!state.canWrite||['home','more'].includes(state.tab);$('#addUnitTop').hidden=!state.canWrite||grpOf(state.tab)!=='estate';
 }
 
 /* ---------- payment dialog ---------- */
@@ -1135,9 +1136,10 @@ $('#payForm').addEventListener('submit',async e=>{
 
 /* ---------- unit dialog ---------- */
 let editing=null;
-function openUnit(id){
+function openUnit(id,pre){
   editing=id?state.units.find(u=>u.id===id):null;
-  const u=editing||{prop:'متفرقة'};
+  const u=editing||Object.assign({prop:'متفرقة'},pre||{});
+  $('#uPropNew').hidden=true;$('#uPropNew').value='';
   $('#unitTitle').textContent=editing?'تعديل '+label(u):'وحدة جديدة';
   $('#uProp').value=u.prop||'متفرقة'; $('#uLoc').value=u.loc||''; $('#uUnit').value=u.unit||''; $('#uPhone').value=u.phone||'';
   $('#uTenant').value=u.tenant||''; $('#uRent').value=u.rent??''; $('#uN').value=u.n?String(u.n):''; $('#uDue').value=u.due||'';
@@ -1149,9 +1151,12 @@ function openUnit(id){
   $('#uHist').innerHTML=H.length?`<div class="uhist"><b>المستأجرين السابقين</b>${H.map(h=>`<div>${esc(h.tenant)} · ${h.rent?fmt(h.rent)+' ريال':''} · من ${dmy(h.contractStart)} · خرج ${dmy(h.leftAt)}</div>`).join('')}</div>`:'';
   $('#unitDlg').showModal();
 }
+$('#uProp').addEventListener('change',()=>{const n=$('#uProp').value==='__new';$('#uPropNew').hidden=!n;if(n)$('#uPropNew').focus()});
 $('#unitForm').addEventListener('submit',async e=>{
   e.preventDefault(); if(!state.db)return;
-  const prop=$('#uProp').value;
+  let prop=$('#uProp').value;
+  if(prop==='__new'){prop=$('#uPropNew').value.trim();if(!prop){toast('اكتب اسم العقار الجديد');return}if(!$('#uLoc').value.trim())$('#uLoc').value=prop}
+  if(!$('#uUnit').value.trim()){toast('اكتب رقم الوحدة');return}
   const body={prop,loc:$('#uLoc').value.trim()||({'الحمدانية':'فلل الحمدانية','المروة':'عمارة المروة'}[prop]||''),unit:$('#uUnit').value.trim(),tenant:$('#uTenant').value.trim(),
     phone:$('#uPhone').value.trim(),rent:$('#uRent').value===''?null:+$('#uRent').value,n:$('#uN').value===''?null:+$('#uN').value,due:$('#uDue').value||null,
     contractEnd:$('#uEnd').value||null,contractStart:$('#uStart').value||null,newRent:$('#uNewRent').value===''?null:+$('#uNewRent').value,contractNo:$('#uContract').value.trim(),lessor:$('#uLessor').value.trim(),note:$('#uNote').value.trim(),
@@ -1699,12 +1704,12 @@ function renderHome(){
   const G={};all.forEach(u=>{const k=bName(u);(G[k]=G[k]||{p:u.prop,us:[]}).us.push(u)});
   const dt=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'][t.getDay()]+' '+dmy(iso(t));
   const qb=(k,ic,tx)=>`<button type="button" class="qb" data-qa="${k}"><i>${ic}</i><span>${tx}</span></button>`;
-  const IC={pay:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',bc:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 1 1 12 0c0 6 2.5 8 2.5 8h-17S6 15 6 9"/><path d="M10 20.5h4"/></svg>',exp:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg>',wk:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M5 7h14M5 12h14M5 17h9"/></svg>'};
+  const IC={unit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="3" width="11" height="18" rx="1.5"/><path d="M8 7.5h1.5M8 11.5h1.5M8.5 21v-3h3v3M19 12v6M16 15h6"/></svg>',pay:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',bc:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 1 1 12 0c0 6 2.5 8 2.5 8h-17S6 15 6 9"/><path d="M10 20.5h4"/></svg>',exp:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg>',wk:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M5 7h14M5 12h14M5 17h9"/></svg>'};
   return `<div class="hello"><div class="d">${dt}</div></div>
   ${late.length?`<button type="button" class="alertc" data-go="due"><span class="ad"></span><span class="at"><b>${late.length} ${late.length>1?'متأخرين':'متأخر'} · <span class="num">${fmt(lateAmt)}</span> ريال</b><small>${late.slice(0,3).map(u=>esc(label(u))).join('، ')}${late.length>3?'…':''}</small></span><span class="ma">‹</span></button>`:''}
   <div class="hx">
     <div class="hero" data-go="reports"><div class="hl"><span>اللي وصلك في ${MONTHS[m]}</span><span class="hp">${rate}%</span></div><div class="hv"><span class="v num">${fmt(state.pays.filter(p=>(p.date||'').startsWith(y+'-'+pad(m+1))).reduce((a,p)=>a+(+p.amount||0),0))}</span><small>ريال · ${state.pays.filter(p=>(p.date||'').startsWith(y+'-'+pad(m+1))).length} دفعة</small></div><div class="hbar"><i style="width:${rate}%"></i></div><div class="hr"><span>إيجارات ${MONTHS[m]}: انسدد ${fmt(M.col)} من ${fmt(M.exp)}</span><span>الباقي ${fmt(Math.max(0,M.exp-M.col))}</span></div></div>
-    <div class="qa2">${state.canWrite?qb('pay',IC.pay,'دفعة'):''}${qb('bc',IC.bc,'تذكير')}${state.canWrite?qb('exp',IC.exp,'مصروف'):''}${qb('wk',IC.wk,'ملخص')}</div>
+    <div class="qa2">${state.canWrite?qb('pay',IC.pay,'دفعة'):''}${qb('bc',IC.bc,'تذكير')}${state.canWrite?qb('exp',IC.exp,'مصروف'):''}${qb('wk',IC.wk,'ملخص')}${state.canWrite?qb('unit',IC.unit,'وحدة'):''}${''}</div>
     <div class="kc ${late.length?'bad':'good'}" data-go="due"><div class="l"><span>متأخر</span></div><div class="v">${fmt(lateAmt)}</div><div class="s">${late.length} مستأجر${pr.length?' · '+pr.length+' بوعد':''}</div></div>
     <div class="kc" data-go="due"><div class="l"><span>خلال 10 أيام</span></div><div class="v">${fmt(nxt.reduce((a,u)=>a+(inst(u)||0),0))}</div><div class="s">${nxt.length} دفعة</div></div>
     <div class="kc" data-go="units"><div class="l"><span>الإيجار السنوي</span></div><div class="v">${fmt(U.reduce((a,u)=>a+(+u.rent||0),0))}</div><div class="s">${all.length} وحدة · إشغال ${occ}%</div></div>
@@ -1780,13 +1785,14 @@ const pendingDel=new Set();
 $('#view').addEventListener('click',e=>{
   const px=e.target.closest('[data-proxy]');if(px){$('#'+px.dataset.proxy).click();setTimeout(()=>{if(state.tab==='more')render()},250);return}
   if(e.target.closest('[data-clearf]')){state.prop='all';state.q='';$('#q').value='';render();return}
+  const au=e.target.closest('[data-addu]');if(au){openUnit(null,{prop:au.dataset.addu,loc:au.dataset.addl});return}
   const be=e.target.closest('[data-bedit]');if(be){openBldg(be.dataset.bedit,be.dataset.bprop);return}
   const p=e.target.closest('[data-prof]');if(p&&!e.target.closest('a,select')){openProf(p.dataset.prof);e.stopImmediatePropagation();return}
   const g=e.target.closest('[data-go]');if(g){goTab(g.dataset.go,g.dataset.prop);return}
   const dv=e.target.closest('[data-dview]');if(dv){state.dview=dv.dataset.dview;render();return}
   const cn=e.target.closest('[data-calnav]');if(cn){calMove(+cn.dataset.calnav);return}
   const cd=e.target.closest('[data-calday]');if(cd){calDay=+cd.dataset.calday;render();return}
-  const qa=e.target.closest('[data-qa]');if(qa){const k=qa.dataset.qa;if(k==='pay')openPay();else if(k==='exp')openExp(null);else if(k==='bc')$('#bcOpen').click();else if(k==='wk')$('#wkOpen').click();return}
+  const qa=e.target.closest('[data-qa]');if(qa){const k=qa.dataset.qa;if(k==='pay')openPay();else if(k==='exp')openExp(null);else if(k==='bc')$('#bcOpen').click();else if(k==='wk')$('#wkOpen').click();else if(k==='unit')openUnit(null);return}
 },true);
 $('#view').addEventListener('click',async e=>{
   const b=e.target.closest('button');if(!b)return;
